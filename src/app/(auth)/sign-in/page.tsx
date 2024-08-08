@@ -1,105 +1,48 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import SignInForm from "../_components/SignInForm";
+import ConfirmEmailForm from "../_components/ConfirmEmailForm";
+import EmailConfirmed from "../_components/EmailConfirmed";
+import { useRouter } from "next/navigation";
 
-import React, { useState } from "react";
-import Link from "next/link";
+export default function SignUpPage() {
+  const router = useRouter();
 
-export default function SignInForm() {
+  const [step, setStep] = useState<number>(1);
   const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [formErrors, setFormErrors] = useState<any[]>([]);
-  const [signUpError, setSignInError] = useState<string | null>(null);
+  const handleLoginSuccess = ({
+    email,
+    needsEmailConfirmation,
+  }: {
+    email?: string;
+    needsEmailConfirmation: boolean;
+  }) => {
+    if (needsEmailConfirmation && email) {
+      setEmail(email);
+      setStep(2);
+    } else {
+      router.replace("/dashboard");
+    }
+  };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleOtpSuccess = () => {
+    setStep(3);
+  };
 
-    setIsLoading(true);
-    setFormErrors([]);
-    setSignInError(null);
+  const handleContinue = () => {
+    setStep(1);
+    setEmail("");
   };
 
   return (
-    <Card className="mx-auto max-w-md p-6 border-gray-50 shadow-lg">
-      <form onSubmit={handleSubmit}>
-        <CardHeader>
-          <CardTitle className="text-2xl">Welcome Back! 👋🏻</CardTitle>
-          <CardDescription className="text-base">
-            Sign in to access your partner portal and let&apos;s get started!
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={`${
-                  formErrors.some((error) => error.for === "email")
-                    ? "border-red-600"
-                    : ""
-                }`}
-              />
-              <div className="mt-1 ml-1 text-xs text-red-600">
-                {formErrors.find((error) => error.for === "email")?.message}
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className={`${
-                  formErrors.some((error) => error.for === "password")
-                    ? "border-red-600"
-                    : ""
-                }`}
-              />
-              <div className="mt-1 ml-1 text-xs text-red-600">
-                {formErrors.find((error) => error.for === "password")?.message}
-              </div>
-            </div>
-            <div className="flex items-center">
-              <Link
-                href="/forgot-password"
-                className="ml-auto inline-block text-sm underline"
-              >
-                Forgot password?
-              </Link>
-            </div>
-            <Button className="w-full" type="submit" disabled={isLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In
-            </Button>
-          </div>
-          <div className="mt-4 text-center text-sm">
-            New here?{" "}
-            <Link href="/sign-up" className="underline">
-              Create an account
-            </Link>
-          </div>
-        </CardContent>
-      </form>
-    </Card>
+    <div>
+      {step === 1 && <SignInForm onSuccess={handleLoginSuccess} />}
+      {step === 2 && (
+        <ConfirmEmailForm email={email} onSuccess={handleOtpSuccess} />
+      )}
+      {step === 3 && <EmailConfirmed onContinue={handleContinue} />}
+    </div>
   );
 }
