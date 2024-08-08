@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { auth } from "@/auth";
 import { ReactNode } from "react";
+import { redirect } from "next/navigation";
 import Image from "next/image";
 import Logo from "../../../public/logo.svg";
 
@@ -8,6 +10,12 @@ interface PublicLayoutProps {
 }
 
 export default async function PublicLayout({ children }: PublicLayoutProps) {
+  const session = await auth();
+
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 bg-background shadow">
