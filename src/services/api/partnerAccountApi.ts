@@ -1,6 +1,6 @@
 'use server';
 
-import { PartnerLoginRequest, PartnerCreateRequest, VerifyTokenRequest } from "@/types/partner";
+import { PartnerLoginRequest, PartnerCreateRequest, VerifyTokenRequest, PartnerPasswordResetRequest } from "@/types/partner";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_TRIWPE_PARTNER_API_URL;
 
@@ -79,5 +79,28 @@ const resetPassword = async (email: string) => {
   return response;
 };
 
-export { signInPartnerAccount, getPartner, createPartnerAccount, confirmEmail, resendEmailConfirmation, resetPassword };
+const confirmResetPasswordCode = async (data: VerifyTokenRequest) => {
+  const res = await fetch(`${API_BASE_URL}/v1/partners/password-reset/verify`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  return res;
+};
+
+const updatePassword = async (data: PartnerPasswordResetRequest) => {
+  data;
+  const res = await fetch(`${API_BASE_URL}/v1/partners/password-reset`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  return res;
+};
+
+export { signInPartnerAccount, getPartner, createPartnerAccount, confirmEmail, resendEmailConfirmation, resetPassword, confirmResetPasswordCode, updatePassword };
 

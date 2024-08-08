@@ -1,6 +1,6 @@
 'use server';
 
-import { PartnerCreateRequest, VerifyTokenRequest } from "@/types/partner";
+import { PartnerCreateRequest, PartnerPasswordResetRequest, VerifyTokenRequest } from "@/types/partner";
 import * as partnerAccountApi from "@/services/api/partnerAccountApi";
 
 
@@ -60,6 +60,49 @@ export async function resetPassword(email: string) {
   try {
     const res = await partnerAccountApi.resetPassword(email);
 
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.detail || "Something went wrong");
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
+export async function confirmResetPasswordCode(email: string, token: string) {
+  const data: VerifyTokenRequest = {
+    email: email as string,
+    token: token as string,
+  };
+
+  try {
+    const res = await partnerAccountApi.confirmResetPasswordCode(data);
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.detail || "Something went wrong");
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
+export async function updatePassword(
+  email: string,
+  token: string,
+  password: string,
+) {
+  const data: PartnerPasswordResetRequest = {
+    email: email as string,
+    token: token as string,
+    new_password: password as string,
+  };
+
+  try {
+    const res = await partnerAccountApi.updatePassword(data);
     if (!res.ok) {
       const errorData = await res.json();
       throw new Error(errorData.detail || "Something went wrong");
