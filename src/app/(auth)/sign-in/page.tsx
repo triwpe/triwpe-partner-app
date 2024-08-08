@@ -15,14 +15,7 @@ import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import Link from "next/link";
 
-interface SignInFormProps {
-  onSuccess: (data: {
-    email?: string;
-    needsEmailConfirmation: boolean;
-  }) => void;
-}
-
-export default function SignInForm({ onSuccess }: SignInFormProps) {
+export default function SignInForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
