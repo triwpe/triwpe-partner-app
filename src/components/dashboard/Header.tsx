@@ -120,21 +120,27 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
             <DropdownMenuTrigger asChild>
               <div>
                 <Avatar
-                  name="b96ad92f-ee78-4a50-8d8d-f1f4f76803a3"
+                  name={session?.data?.email}
                   variant="beam"
                   size={40}
-                  colors={["#fb6900", "#f63700", "#004e98", "#00a1f1"]}
+                  colors={[
+                    "#F25C54",
+                    "#F27059",
+                    "#f4845f",
+                    "#f79d65",
+                    "#f7b267",
+                  ]}
                 />
               </div>
-              {/* <div className="avatar rounded-full min-h-10 min-w-10 bg-emerald-500 text-white font-[700] flex items-center justify-center outline-none ">
-                <p>
-                  {session?.data?.firstName?.charAt(0)}
-                  {session?.data?.lastName?.charAt(0)}
-                </p>
-              </div> */}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem> </DropdownMenuItem>
+              <DropdownMenuItem>
+                <div className="flex items-center justify-between gap-2 p-2">
+                  <p className="text-sm font-medium text-neutral-500">
+                    {session?.data?.email}
+                  </p>{" "}
+                </div>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
