@@ -3,8 +3,8 @@
 import { useSession } from "next-auth/react";
 import { ReactNode, useState } from "react";
 import { redirect } from "next/navigation";
-import Sidebar from "@/components/private/Sidebar";
-import Header from "@/components/private/Header";
+import Sidebar from "@/components/dashboard/Sidebar";
+import Header from "@/components/dashboard/Header";
 
 interface PrivateLayoutProps {
   children: ReactNode;
