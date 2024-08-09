@@ -12,7 +12,7 @@ interface PrivateLayoutProps {
 
 export default function PrivateLayout({ children }: PrivateLayoutProps) {
   const session = useSession();
-  if (!session.data) {
+  if (session.data === null) {
     redirect("/sign-in");
   }
 
