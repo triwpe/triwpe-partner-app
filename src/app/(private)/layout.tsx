@@ -1,17 +1,33 @@
-import { auth } from "@/auth";
-import { ReactNode } from "react";
+"use client";
+
+import { useSession } from "next-auth/react";
+import { ReactNode, useState } from "react";
 import { redirect } from "next/navigation";
+import Sidebar from "@/components/private/Sidebar";
+import Header from "@/components/private/Header";
 
 interface PrivateLayoutProps {
   children: ReactNode;
 }
 
-export default async function PrivateLayout({ children }: PrivateLayoutProps) {
-  const session = await auth();
+export default function PrivateLayout({ children }: PrivateLayoutProps) {
+  const session = useSession();
 
   if (!session) {
     redirect("/sign-in");
   }
 
-  return <>{children}</>;
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  return (
+    <div className="flex h-screen">
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="flex-1 flex flex-col">
+        <Header onMenuClick={() => setSidebarOpen(true)} />
+        <main className="flex-1 p-4 mt-2 overflow-y-auto">
+          <div className="mx-auto">{children}</div>
+        </main>
+      </div>
+    </div>
+  );
 }
