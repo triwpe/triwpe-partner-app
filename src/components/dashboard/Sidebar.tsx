@@ -32,7 +32,7 @@ export default function Sidebar({
         {
           name: "Create Guide",
           icon: <MapPinned className={`${menuIconSize}`} />,
-          href: "#",
+          href: "/dashboard/guides/new",
           order: 1,
         },
         {
