@@ -50,6 +50,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { GuideDetailsForm } from "../_components/GuideDetailsForm";
 import { GuideStatusForm } from "../_components/GuideStatusForm";
+import { GuideCategoriesForm } from "../_components/GuideCategoriesForm";
 
 interface PageParams {
   id: string;
@@ -232,20 +233,7 @@ export default function Page({ params }: { params: PageParams }) {
         </div>
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
           <GuideStatusForm />
-          <Card>
-            <CardHeader>
-              <CardTitle>Archive Product</CardTitle>
-              <CardDescription>
-                Lipsum dolor sit amet, consectetur adipiscing elit.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div></div>
-              <Button size="sm" variant="secondary">
-                Archive Product
-              </Button>
-            </CardContent>
-          </Card>
+          <GuideCategoriesForm />
         </div>
       </div>
       <div className="flex items-center justify-center gap-2 md:hidden">
