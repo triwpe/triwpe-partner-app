@@ -38,8 +38,8 @@ export const NewGuideDialogLocationStep = ({
   return (
     <Card className="border-0 shadow-none">
       <CardHeader>
-        <CardTitle className="grid grid-cols-1 gap-4">
-          <div className="text-2xl">Choose your guide location 🗺️</div>
+        <CardTitle className="text-2xl">
+          Choose your guide location 🗺️
         </CardTitle>
       </CardHeader>
       <CardContent>

@@ -31,9 +31,7 @@ export const NewGuideDialogTitleStep = ({
   return (
     <Card className="border-0 shadow-none">
       <CardHeader>
-        <CardTitle className="grid grid-cols-1 gap-4">
-          <div className="text-2xl">Name your guide ✏️</div>
-        </CardTitle>
+        <CardTitle className="text-2xl">Name your guide ✏️</CardTitle>
       </CardHeader>
       <CardContent>
         <div id="step-2">

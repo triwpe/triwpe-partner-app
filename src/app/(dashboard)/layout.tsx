@@ -24,7 +24,7 @@ export default function PrivateLayout({ children }: PrivateLayoutProps) {
       <div className="flex-1 flex flex-col">
         <Header onMenuClick={() => setSidebarOpen(true)} />
 
-        <main className="flex-1 p-4 mt-2 overflow-y-auto">
+        <main className="flex-1 p-4 pl-6 mt-2 overflow-y-scroll">
           <div className="mx-auto">{children}</div>
         </main>
       </div>

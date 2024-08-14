@@ -4,10 +4,12 @@ import {
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { NewGuideDialogTitleStep } from "./NewGuideDialogTitleStep";
 import { NewGuideDialogLocationStep } from "./NewGuideDialogLocationStep";
 import { useRouter } from "next/navigation";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
 export function NewGuideDialog() {
   const router = useRouter();
@@ -35,6 +37,9 @@ export function NewGuideDialog() {
     <AlertDialog open={true}>
       <AlertDialogContent>
         <AlertDialogHeader>
+          <VisuallyHidden.Root>
+            <AlertDialogTitle></AlertDialogTitle>
+          </VisuallyHidden.Root>
           <AlertDialogDescription>
             {step === 1 && (
               <NewGuideDialogLocationStep
