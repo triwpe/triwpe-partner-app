@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowUpDown, Eye, EyeOff, Pencil, Plus } from "lucide-react";
 import { useState } from "react";
 import { NewSectionItemDialog } from "./NewSectionItemDialog";
+import { ReorderSectionItemDialog } from "./ReorderSectionItemDialog";
 
 const items = [
   {
@@ -63,6 +64,7 @@ export function GuideSectionItems() {
   const sectionTitle = "Alimentação";
 
   const [isNewItemDialogOpen, setIsNewItemDialogOpen] = useState(false);
+  const [isReorderItemDialogOpen, setIsReorderItemDialogOpen] = useState(false);
 
   const [selectedSection, setSelectedSection] = useState<string | undefined>(
     undefined
@@ -82,6 +84,14 @@ export function GuideSectionItems() {
 
   const handleCloseNewSectionItemDialog = () => {
     setIsNewItemDialogOpen(false);
+  };
+
+  const handleOpenReorderItemDialog = () => {
+    setIsReorderItemDialogOpen(true);
+  };
+
+  const handleCloseReorderItemDialog = () => {
+    setIsReorderItemDialogOpen(false);
   };
 
   if (items.length === 0) {
@@ -126,13 +136,18 @@ export function GuideSectionItems() {
                 <Plus className="h-4 w-4" />
                 Add Item
               </Button>
-              <Button size="sm">
-                <ArrowUpDown className="h-4 w-4" />
-                Reorder
-              </Button>
               <NewSectionItemDialog
                 isOpen={isNewItemDialogOpen}
                 onCancel={handleCloseNewSectionItemDialog}
+              />
+              <Button size="sm" onClick={handleOpenReorderItemDialog}>
+                <ArrowUpDown className="h-4 w-4" />
+                Reorder
+              </Button>
+              <ReorderSectionItemDialog
+                isOpen={isReorderItemDialogOpen}
+                data={items}
+                onCancel={handleCloseReorderItemDialog}
               />
             </div>
           </div>
