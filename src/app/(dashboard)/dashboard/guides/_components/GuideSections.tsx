@@ -19,6 +19,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowUpDown, Plus } from "lucide-react";
 import { useState } from "react";
+import { NewGuideSectionDialog } from "./NewGuideSectionDialog";
 
 // const sections: any[] = [];
 
@@ -97,6 +98,8 @@ const sections = [
 ];
 
 export function GuideSections() {
+  const [isNewSectionDialogOpen, setIsNewSectionDialogOpen] = useState(false);
+
   const [selectedSection, setSelectedSection] = useState<string | undefined>(
     undefined
   );
@@ -119,6 +122,14 @@ export function GuideSections() {
     }
   };
 
+  const handleOpenNewGuideSectionDialog = () => {
+    setIsNewSectionDialogOpen(true);
+  };
+
+  const handleCloseNewGuideSectionDialog = () => {
+    setIsNewSectionDialogOpen(false);
+  };
+
   if (sections.length === 0) {
     return (
       <Card>
@@ -128,9 +139,17 @@ export function GuideSections() {
               No sections here yet! Let's get started by adding your first one.
               🚀
             </p>
-            <Button size="sm" className="mt-8 mb-8">
+            <Button
+              size="sm"
+              className="mt-8 mb-8"
+              onClick={handleOpenNewGuideSectionDialog}
+            >
               Add First Section
             </Button>
+            <NewGuideSectionDialog
+              isOpen={isNewSectionDialogOpen}
+              onCancel={handleCloseNewGuideSectionDialog}
+            />
           </div>
         </CardContent>
       </Card>
@@ -170,7 +189,7 @@ export function GuideSections() {
               </SelectContent>
             </Select>
             <div className="flex gap-1">
-              <Button size="sm">
+              <Button size="sm" onClick={handleOpenNewGuideSectionDialog}>
                 <Plus className="h-4 w-4" />
                 Add Section
               </Button>
@@ -178,6 +197,10 @@ export function GuideSections() {
                 <ArrowUpDown className="h-4 w-4" />
                 Reorder
               </Button>
+              <NewGuideSectionDialog
+                isOpen={isNewSectionDialogOpen}
+                onCancel={handleCloseNewGuideSectionDialog}
+              />
             </div>
           </div>
           {selectedSection && (
