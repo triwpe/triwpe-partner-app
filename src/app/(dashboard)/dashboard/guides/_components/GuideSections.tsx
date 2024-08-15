@@ -20,6 +20,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowUpDown, Plus } from "lucide-react";
 import { useState } from "react";
 
+// const sections: any[] = [];
+
 const sections = [
   {
     guide_section_id: "e3ef4f2f-0494-45d9-9f12-4f37a5e242f8",
@@ -116,6 +118,24 @@ export function GuideSections() {
       setVisible(findSection.is_visible_on_demo);
     }
   };
+
+  if (sections.length === 0) {
+    return (
+      <Card>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center mt-16">
+            <p className="text-gray-500">
+              No sections here yet! Let's get started by adding your first one.
+              🚀
+            </p>
+            <Button size="sm" className="mt-8 mb-8">
+              Add First Section
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
