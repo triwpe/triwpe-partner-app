@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowUpDown, Plus } from "lucide-react";
 import { useState } from "react";
 import { NewGuideSectionDialog } from "./NewGuideSectionDialog";
+import { ReorderGuideSectionDialog } from "./ReorderGuideSectionDialog";
 
 // const sections: any[] = [];
 
@@ -99,6 +100,8 @@ const sections = [
 
 export function GuideSections() {
   const [isNewSectionDialogOpen, setIsNewSectionDialogOpen] = useState(false);
+  const [isReorderSectionDialogOpen, setIsReorderSectionDialogOpen] =
+    useState(false);
 
   const [selectedSection, setSelectedSection] = useState<string | undefined>(
     undefined
@@ -128,6 +131,14 @@ export function GuideSections() {
 
   const handleCloseNewGuideSectionDialog = () => {
     setIsNewSectionDialogOpen(false);
+  };
+
+  const handleOpenReorderSectionDialog = () => {
+    setIsReorderSectionDialogOpen(true);
+  };
+
+  const handleCloseReorderSectionDialog = () => {
+    setIsReorderSectionDialogOpen(false);
   };
 
   if (sections.length === 0) {
@@ -193,13 +204,18 @@ export function GuideSections() {
                 <Plus className="h-4 w-4" />
                 Add Section
               </Button>
-              <Button size="sm">
-                <ArrowUpDown className="h-4 w-4" />
-                Reorder
-              </Button>
               <NewGuideSectionDialog
                 isOpen={isNewSectionDialogOpen}
                 onCancel={handleCloseNewGuideSectionDialog}
+              />
+              <Button size="sm" onClick={handleOpenReorderSectionDialog}>
+                <ArrowUpDown className="h-4 w-4" />
+                Reorder
+              </Button>
+              <ReorderGuideSectionDialog
+                isOpen={isReorderSectionDialogOpen}
+                sections={sections}
+                onCancel={handleCloseReorderSectionDialog}
               />
             </div>
           </div>
