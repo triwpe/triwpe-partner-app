@@ -52,6 +52,7 @@ import { GuideDetailsForm } from "../_components/GuideDetailsForm";
 import { GuideStatusForm } from "../_components/GuideStatusForm";
 import { GuideCategoriesForm } from "../_components/GuideCategoriesForm";
 import { GuideSections } from "../_components/GuideSections";
+import { GuideSectionItems } from "../_components/GuideSectionItems";
 
 interface PageParams {
   id: string;
@@ -76,8 +77,8 @@ export default function Page({ params }: { params: PageParams }) {
 
   return (
     <div className="mx-auto grid flex-1 auto-rows-max gap-4 overflow-hidden">
-      <div className="flex items-center gap-4">
-        <div className="items-center gap-2 ml-auto flex">
+      <div className="flex items-end gap-4">
+        <div className="items-end gap-2 ml-auto flex">
           <Button variant="outline" size="sm">
             Discard
           </Button>
@@ -88,44 +89,7 @@ export default function Page({ params }: { params: PageParams }) {
         <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
           <GuideDetailsForm />
           <GuideSections />
-          <Card>
-            <CardHeader>
-              <CardTitle>Product Category</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-6 sm:grid-cols-3">
-                <div className="grid gap-3">
-                  <Label htmlFor="category">Category</Label>
-                  <Select>
-                    <SelectTrigger id="category" aria-label="Select category">
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="clothing">Clothing</SelectItem>
-                      <SelectItem value="electronics">Electronics</SelectItem>
-                      <SelectItem value="accessories">Accessories</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="subcategory">Subcategory (optional)</Label>
-                  <Select>
-                    <SelectTrigger
-                      id="subcategory"
-                      aria-label="Select subcategory"
-                    >
-                      <SelectValue placeholder="Select subcategory" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="t-shirts">T-Shirts</SelectItem>
-                      <SelectItem value="hoodies">Hoodies</SelectItem>
-                      <SelectItem value="sweatshirts">Sweatshirts</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <GuideSectionItems />
         </div>
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
           <GuideStatusForm />
