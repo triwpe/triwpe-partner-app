@@ -66,7 +66,7 @@ export function NewSectionItemDialog({
             <Card className="border-0 shadow-none">
               <CardHeader>
                 <CardTitle className="text-2xl">
-                  Add a new item for "{sectionTitle}" section
+                  Add a new item for &ldquo;{sectionTitle}&rdquo; section
                 </CardTitle>
               </CardHeader>
               <CardContent>

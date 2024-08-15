@@ -100,8 +100,8 @@ export function GuideSectionItems() {
         <CardContent>
           <div className="flex flex-col items-center justify-center mt-16">
             <p className="text-gray-500">
-              The "{sectionTitle}" section is empty. Add your first item to get
-              started! 🎯
+              The &ldquo;{sectionTitle}&rdquo; section is empty. Add your first
+              item to get started! 🎯
             </p>
             <Button
               size="sm"
@@ -125,7 +125,7 @@ export function GuideSectionItems() {
       <CardHeader>
         <CardTitle>Section Items</CardTitle>
         <CardDescription>
-          Manage your "{sectionTitle}" section items
+          Manage your &ldquo;{sectionTitle}&rdquo; section items
         </CardDescription>
       </CardHeader>
       <CardContent>

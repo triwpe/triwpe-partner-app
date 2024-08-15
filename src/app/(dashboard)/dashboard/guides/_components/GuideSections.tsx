@@ -147,8 +147,8 @@ export function GuideSections() {
         <CardContent>
           <div className="flex flex-col items-center justify-center mt-16">
             <p className="text-gray-500">
-              No sections here yet! Let's get started by adding your first one.
-              🚀
+              No sections here yet! Let&quot;s get started by adding your first
+              one. 🚀
             </p>
             <Button
               size="sm"
