@@ -19,6 +19,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowUpDown, Eye, EyeOff, Pencil, Plus } from "lucide-react";
 import { useState } from "react";
+import { NewSectionItemDialog } from "./NewSectionItemDialog";
 
 const items = [
   {
@@ -61,6 +62,8 @@ const items = [
 export function GuideSectionItems() {
   const sectionTitle = "Alimentação";
 
+  const [isNewItemDialogOpen, setIsNewItemDialogOpen] = useState(false);
+
   const [selectedSection, setSelectedSection] = useState<string | undefined>(
     undefined
   );
@@ -73,6 +76,14 @@ export function GuideSectionItems() {
     setSelectedSection(value);
   };
 
+  const handleOpenNewSectionItemDialog = () => {
+    setIsNewItemDialogOpen(true);
+  };
+
+  const handleCloseNewSectionItemDialog = () => {
+    setIsNewItemDialogOpen(false);
+  };
+
   if (items.length === 0) {
     return (
       <Card>
@@ -82,9 +93,17 @@ export function GuideSectionItems() {
               The "{sectionTitle}" section is empty. Add your first item to get
               started! 🎯
             </p>
-            <Button size="sm" className="mt-8 mb-8">
+            <Button
+              size="sm"
+              className="mt-8 mb-8"
+              onClick={handleOpenNewSectionItemDialog}
+            >
               Add First Item
             </Button>
+            <NewSectionItemDialog
+              isOpen={isNewItemDialogOpen}
+              onCancel={handleCloseNewSectionItemDialog}
+            />
           </div>
         </CardContent>
       </Card>
@@ -103,7 +122,7 @@ export function GuideSectionItems() {
         <div className="grid gap-6">
           <div className="flex justify-end gap-3 pb-4">
             <div className="flex gap-1">
-              <Button size="sm">
+              <Button size="sm" onClick={handleOpenNewSectionItemDialog}>
                 <Plus className="h-4 w-4" />
                 Add Item
               </Button>
@@ -111,6 +130,10 @@ export function GuideSectionItems() {
                 <ArrowUpDown className="h-4 w-4" />
                 Reorder
               </Button>
+              <NewSectionItemDialog
+                isOpen={isNewItemDialogOpen}
+                onCancel={handleCloseNewSectionItemDialog}
+              />
             </div>
           </div>
           <Accordion type="single" collapsible className="w-full">
