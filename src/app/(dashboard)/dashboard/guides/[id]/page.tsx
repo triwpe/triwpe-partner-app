@@ -53,6 +53,7 @@ import { GuideStatusForm } from "../_components/GuideStatusForm";
 import { GuideCategoriesForm } from "../_components/GuideCategoriesForm";
 import { GuideSections } from "../_components/GuideSections";
 import { GuideSectionItems } from "../_components/GuideSectionItems";
+import { GuideImagesUpload } from "../_components/GuideImagesUpload";
 
 interface PageParams {
   id: string;
@@ -94,6 +95,7 @@ export default function Page({ params }: { params: PageParams }) {
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
           <GuideStatusForm />
           <GuideCategoriesForm />
+          <GuideImagesUpload />
         </div>
       </div>
       <div className="flex items-center justify-center gap-2 md:hidden">
