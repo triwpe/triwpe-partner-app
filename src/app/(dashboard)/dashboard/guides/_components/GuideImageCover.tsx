@@ -64,7 +64,7 @@ export function GuideImageCover() {
             onValueChange={handleFileChange}
             dropzoneOptions={dropzone}
           >
-            {files?.length === 0 && (
+            {(!files || files?.length === 0) && (
               <FileInput>
                 <div className="flex items-center justify-center h-32 w-full border-2 border-dashed bg-background rounded-md">
                   <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">

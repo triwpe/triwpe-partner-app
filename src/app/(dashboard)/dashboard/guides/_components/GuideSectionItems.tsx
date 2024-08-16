@@ -14,13 +14,21 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  FileUploader,
+  FileUploaderContent,
+  FileUploaderItem,
+  FileInput,
+} from "@/components/extension/file-upload";
 
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUpDown, Eye, EyeOff, Pencil, Plus } from "lucide-react";
+import { ArrowUpDown, Eye, EyeOff, Pencil, Plus, Upload } from "lucide-react";
 import { useState } from "react";
 import { NewSectionItemDialog } from "./NewSectionItemDialog";
 import { ReorderSectionItemDialog } from "./ReorderSectionItemDialog";
+import { DropzoneOptions } from "react-dropzone";
+import Image from "next/image";
 
 const items = [
   {
@@ -62,6 +70,7 @@ const items = [
 
 export function GuideSectionItems() {
   const sectionTitle = "Alimentação";
+  const [files, setFiles] = useState<File[] | null>(null);
 
   const [isNewItemDialogOpen, setIsNewItemDialogOpen] = useState(false);
   const [isReorderItemDialogOpen, setIsReorderItemDialogOpen] = useState(false);
@@ -73,6 +82,15 @@ export function GuideSectionItems() {
   const [fullTitle, setFullTitle] = useState("");
   const [description, setDescription] = useState("");
   const [visible, setVisible] = useState(false);
+
+  const dropzone = {
+    accept: {
+      "image/*": [".jpg", ".jpeg", ".png"],
+    },
+    multiple: true,
+    maxFiles: 5,
+    maxSize: 1 * 1024 * 1024,
+  } satisfies DropzoneOptions;
 
   const handleSectionChange = (value: string) => {
     setSelectedSection(value);
@@ -92,6 +110,31 @@ export function GuideSectionItems() {
 
   const handleCloseReorderItemDialog = () => {
     setIsReorderItemDialogOpen(false);
+  };
+
+  const handleFileChange = (values: File[] | null) => {
+    const createFileSet = (fileArray: File[]) =>
+      new Set(fileArray.map((file) => file.name));
+
+    // Create sets for files and values
+    const fileSet = createFileSet(files !== null ? files : []);
+    const valueSet = createFileSet(values !== null ? values : []);
+
+    // Select values in "values" that are not in "files"
+    const valuesNotInFiles = values?.filter((file) => !fileSet.has(file.name));
+
+    // Select values in "files" that are not in "values"
+    const filesNotInValues = files?.filter((file) => !valueSet.has(file.name));
+
+    console.log("Add this:", valuesNotInFiles);
+    console.log("Remove this:", filesNotInValues);
+
+    //add delay
+    setTimeout(() => {
+      console.log("Done");
+    }, 5000);
+
+    setFiles(values);
   };
 
   if (items.length === 0) {
@@ -188,6 +231,48 @@ export function GuideSectionItems() {
                         checked={item.is_visible_on_demo}
                       />
                       <Label htmlFor="airplane-mode">Visible on demo?</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <FileUploader
+                        value={files}
+                        onValueChange={handleFileChange}
+                        dropzoneOptions={dropzone}
+                      >
+                        <FileUploaderContent className="grid grid-cols-5 gap-2">
+                          {files?.map((file, i) => (
+                            <FileUploaderItem
+                              key={i}
+                              index={i}
+                              className="w-full h-full aspect-square p-0 rounded-md overflow-hidden"
+                              aria-roledescription={`file ${i + 1} containing ${
+                                file.name
+                              }`}
+                            >
+                              <Image
+                                src={URL.createObjectURL(file)}
+                                alt={file.name}
+                                height={80}
+                                width={80}
+                                className="w-full h-full aspect-square p-0"
+                              />
+                            </FileUploaderItem>
+                          ))}
+                          {(!files || files?.length < 5) && (
+                            <FileInput>
+                              <div className="w-full h-full aspect-square p-0 rounded-md overflow-hidden border-2 border-dashed flex items-center justify-center">
+                                <div className="flex items-center justify-center flex-col w-full ">
+                                  <Upload className="w-6 h-6 mb-3 text-gray-500 dark:text-gray-400" />
+                                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    <span className="font-semibold">
+                                      Click to upload
+                                    </span>
+                                  </p>
+                                </div>
+                              </div>
+                            </FileInput>
+                          )}
+                        </FileUploaderContent>
+                      </FileUploader>
                     </div>
                     <div className="flex gap-2">
                       <Button size="default">Update Item</Button>
