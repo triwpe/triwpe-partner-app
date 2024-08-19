@@ -55,12 +55,15 @@ import { GuideSections } from "../_components/GuideSections";
 import { GuideSectionItems } from "../_components/GuideSectionItems";
 import { GuideImagesUpload } from "../_components/GuideImagesUpload";
 import { GuideImageCover } from "../_components/GuideImageCover";
+import { getGuide } from "@/actions/guide";
+import { GuideProps } from "../_types/components";
 
 interface PageParams {
   id: string;
 }
 
 export default function Page({ params }: { params: PageParams }) {
+  const [guideData, setGuideData] = useState<GuideProps | null>(null);
   const [guideId, setGuideId] = useState(params.id);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -70,11 +73,28 @@ export default function Page({ params }: { params: PageParams }) {
     if (!uuidValidate(guideId)) {
       router.replace("/dashboard/guides/new");
     }
+
+    fetchGuideData();
+
     setIsLoading(false);
   }, [guideId]);
 
-  if (isLoading) {
-    return <></>;
+  const fetchGuideData = async () => {
+    const response = await getGuide(guideId);
+    if (!response.success) {
+      router.replace("/dashboard/guides/new");
+    } else {
+      setGuideData(response.data);
+    }
+  };
+
+  const updateGuideData = (updatedData: Partial<GuideProps>) => {
+    setGuideData((prev) => ({ ...prev, ...updatedData } as GuideProps));
+    console.log(guideData);
+  };
+
+  if (isLoading || !guideData) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -84,17 +104,28 @@ export default function Page({ params }: { params: PageParams }) {
           <Button variant="outline" size="sm">
             Discard
           </Button>
-          <Button size="sm">Save Product</Button>
+          <Button size="sm">Save Guide</Button>
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
         <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
-          <GuideDetailsForm />
+          <GuideDetailsForm
+            title={guideData?.title ?? ""}
+            location={guideData?.location?.place_name ?? ""}
+            language={guideData?.language ?? undefined}
+            duration={guideData?.duration ?? null}
+            price={guideData?.price ?? null}
+            description={guideData?.description ?? null}
+            onUpdate={updateGuideData}
+          />
           <GuideSections />
           <GuideSectionItems />
         </div>
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-          <GuideStatusForm />
+          <GuideStatusForm
+            status={guideData.status}
+            onUpdate={updateGuideData}
+          />
           <GuideCategoriesForm />
           <GuideImageCover />
           <GuideImagesUpload />

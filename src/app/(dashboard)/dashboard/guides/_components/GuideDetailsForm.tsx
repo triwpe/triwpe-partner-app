@@ -16,8 +16,54 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+import { GuideProps } from "../_types/components";
+import { set } from "zod";
 
-export function GuideDetailsForm() {
+interface GuideDetailsFormProps {
+  title: string;
+  location: string;
+  duration: number | null;
+  price: number | null;
+  language: string | undefined;
+  description: string | null;
+  onUpdate: (updatedData: Partial<GuideProps>) => void;
+}
+
+export function GuideDetailsForm({
+  title,
+  location,
+  duration,
+  price,
+  language,
+  description,
+  onUpdate,
+}: GuideDetailsFormProps) {
+  const [selectedOption, setSelectedOption] = useState(language);
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdate({ title: e.target.value });
+  };
+
+  const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdate({ duration: parseInt(e.target.value) });
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdate({ price: parseFloat(e.target.value) });
+  };
+
+  const handleLanguageChange = (value: string) => {
+    setSelectedOption(value);
+    onUpdate({ language: value });
+  };
+
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    onUpdate({ description: e.target.value });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -32,8 +78,8 @@ export function GuideDetailsForm() {
               id="name"
               type="text"
               className="w-full"
-              value="🌆 Guia Completo de Tokyo 🌟"
-              disabled
+              value={title}
+              onChange={handleTitleChange}
             />
           </div>
           <div className="grid gap-3">
@@ -42,21 +88,40 @@ export function GuideDetailsForm() {
               id="name"
               type="text"
               className="w-full"
-              value="Tokyo, Japan"
+              value={location}
               disabled
             />
           </div>
           <div className="grid gap-3">
             <Label htmlFor="name">Duration (days)</Label>
-            <Input id="name" type="text" className="w-1/3" placeholder="0" />
+            <Input
+              id="name"
+              type="text"
+              className="w-1/3"
+              placeholder="Duration"
+              value={duration?.toString()}
+              onChange={handleDurationChange}
+            />
           </div>
           <div className="grid gap-3">
             <Label htmlFor="name">Price</Label>
-            <Input id="name" type="text" className="w-1/3" placeholder="0.00" />
+            <Input
+              id="name"
+              type="text"
+              className="w-1/3"
+              placeholder="Price"
+              value={price?.toString()}
+              onChange={handlePriceChange}
+            />
           </div>
           <div className="grid gap-3">
             <Label htmlFor="name">Language</Label>
-            <Select>
+            <Select
+              value={selectedOption}
+              onValueChange={(value) => {
+                handleLanguageChange(value);
+              }}
+            >
               <SelectTrigger
                 id="status"
                 aria-label="Select status"
@@ -83,6 +148,8 @@ export function GuideDetailsForm() {
               id="description"
               placeholder="Write a description for your guide"
               className="min-h-32"
+              value={description?.toString()}
+              onChange={handleDescriptionChange}
             />
           </div>
         </div>

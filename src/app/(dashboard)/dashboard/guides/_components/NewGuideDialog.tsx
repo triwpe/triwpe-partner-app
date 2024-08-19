@@ -10,6 +10,7 @@ import { NewGuideDialogTitleStep } from "./NewGuideDialogTitleStep";
 import { NewGuideDialogLocationStep } from "./NewGuideDialogLocationStep";
 import { useRouter } from "next/navigation";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
+import { createGuide } from "@/actions/guide";
 
 export function NewGuideDialog() {
   const router = useRouter();
@@ -27,10 +28,12 @@ export function NewGuideDialog() {
   };
 
   const handleSubmit = async (title: string) => {
-    const newGuideTitle: string = title;
-    console.log(newGuideTitle);
-    console.log(newGuideLocation.id);
-    console.log(newGuideLocation.place_name);
+    const response = await createGuide(title, newGuideLocation.id);
+    if (response.success) {
+      router.push(`/dashboard/guides/${response.data.id}`);
+    } else {
+      console.error(response.message);
+    }
   };
 
   return (

@@ -18,6 +18,7 @@ import {
   CommandList,
 } from "../ui/command";
 import { Skeleton } from "../ui/skeleton";
+import { getLocation } from "@/actions/location";
 
 type ResponseData = {
   data: Option[];
@@ -71,10 +72,7 @@ export const LocationAutoComplete = ({
       }
 
       if (input.value && input.value.length >= 3) {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_TRIWPE_GUIDE_API_URL}/v1/locations?input=${input.value}`
-        );
-        const data = await res.json();
+        const data = await getLocation(input.value);
 
         setLocations(data.features);
       }

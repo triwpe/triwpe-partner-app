@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 import { LocationAutoComplete } from "@/components/dashboard/LocationAutoComplete";
 import { useState } from "react";
+import { createMaptilerLocation } from "@/actions/location";
 
 interface NewGuideDialogLocationStepProps {
   onSuccess: (newGuideLocation: any) => void;
@@ -22,9 +23,15 @@ export const NewGuideDialogLocationStep = ({
   const [newGuideLocation, setNewGuideLocation] = useState<any>("");
 
   const handleLocationChange = async (selected_location: any) => {
-    selected_location === undefined
-      ? setNewGuideLocation("")
-      : setNewGuideLocation(selected_location);
+    if (selected_location === undefined) {
+      setNewGuideLocation("");
+    } else {
+      setNewGuideLocation(selected_location);
+      createMaptilerLocation(
+        selected_location.id,
+        JSON.stringify(selected_location)
+      );
+    }
   };
 
   const handleSubmit = async () => {

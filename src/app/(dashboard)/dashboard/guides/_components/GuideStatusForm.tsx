@@ -6,8 +6,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { GuideProps } from "../_types/components";
 
-export function GuideStatusForm() {
+interface GuideStatusFormProps {
+  status: string;
+  onUpdate: (updatedData: Partial<GuideProps>) => void;
+}
+
+export function GuideStatusForm({ status, onUpdate }: GuideStatusFormProps) {
+  const handleStatusChange = (value: string) => {
+    onUpdate({ status: value });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -16,7 +26,12 @@ export function GuideStatusForm() {
       <CardContent>
         <div className="grid gap-6">
           <div className="grid gap-3">
-            <Select defaultValue="draft">
+            <Select
+              defaultValue={status}
+              onValueChange={(value) => {
+                handleStatusChange(value);
+              }}
+            >
               <SelectTrigger id="status" aria-label="Select status">
                 <SelectValue placeholder="Select guide status" />
               </SelectTrigger>

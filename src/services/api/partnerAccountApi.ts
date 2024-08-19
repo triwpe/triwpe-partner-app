@@ -91,7 +91,6 @@ const confirmResetPasswordCode = async (data: VerifyTokenRequest) => {
 };
 
 const updatePassword = async (data: PartnerPasswordResetRequest) => {
-  data;
   const res = await fetch(`${API_BASE_URL}/v1/partners/password-reset`, {
     method: "PATCH",
     headers: {
