@@ -5,6 +5,7 @@ import { ReactNode, Suspense, useState } from "react";
 import { redirect } from "next/navigation";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Header from "@/components/dashboard/Header";
+import { Toaster } from "@/components/ui/toaster";
 
 interface PrivateLayoutProps {
   children: ReactNode;
@@ -27,6 +28,7 @@ export default function PrivateLayout({ children }: PrivateLayoutProps) {
         <main className="flex-1 p-4 pl-6 mt-2 overflow-y-scroll">
           <div className="mx-auto">{children}</div>
         </main>
+        <Toaster />
       </div>
     </div>
   );

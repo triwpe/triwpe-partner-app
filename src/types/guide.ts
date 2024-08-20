@@ -8,6 +8,21 @@ export interface GuideCreateRequest{
   location_id: string;
 }
 
+export interface GuideUpdateRequest{
+  title?: string;
+  description?: string;
+  duration?: number;
+  price?: number;
+  language?: string;
+  status?: string;
+}
+
+export interface GuideCategoryUpsertRequest{
+  category_id: string;
+  is_main: boolean;
+  old_category_id?: string;
+}
+
 export interface GuideResponse{
   id: string;
   title: string;

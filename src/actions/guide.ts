@@ -1,6 +1,6 @@
 'use server';
 
-import { GuideCreateRequest, GuideResponse } from "@/types/guide";
+import { GuideCreateRequest, GuideResponse, GuideUpdateRequest } from "@/types/guide";
 import * as partnerGuideApi from "@/services/api/partnerGuideApi";
 
 
@@ -32,6 +32,29 @@ export async function getGuide(id: string) {
     }
 
     return { success: true, data: await response.json() };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
+export async function updateGuide(id: string, title?: string, description?: string, duration?: number, price?: number, language?: string, status?: string) {
+  const data: GuideUpdateRequest = {
+    title: title,
+    description: description,
+    duration: duration,
+    price: price,
+    language: language,
+    status: status,
+  }
+   
+  try {
+    const response = await partnerGuideApi.updateGuide(id, data);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.detail || "Something went wrong" };
+    }
+
+    return { success: true };
   } catch (error: any) {
     return { success: false, message: error.message };
   }

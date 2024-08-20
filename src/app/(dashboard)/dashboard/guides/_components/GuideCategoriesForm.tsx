@@ -8,86 +8,152 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X } from "lucide-react";
-import { useState } from "react";
+import { LoaderIcon, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { GuideProps } from "../_types/components";
+import {
+  deleteGuideCategory,
+  getCategories,
+  updateGuideCategory,
+} from "@/actions/category";
+import { set } from "zod";
 
-const categories = [
-  { value: "budget", label: "Budget-Friendly" },
-  { value: "luxury", label: "Luxury Experience" },
-  { value: "food", label: "Food and Culinary" },
-  { value: "historic", label: "Historic and Heritage" },
-  { value: "adventure", label: "Adventure" },
-  { value: "cultural", label: "Cultural" },
-  { value: "romantic", label: "Romantic Gateway" },
-  { value: "solo", label: "Solo Traveler's" },
-  { value: "art", label: "Art and Architecture" },
-  { value: "wellness", label: "Wellness and Relaxation" },
-  { value: "beach", label: "Beach and Island" },
-  { value: "backpacker", label: "Backpacker's" },
-  { value: "roadtrip", label: "Road Trip" },
-  { value: "wildlife", label: "Wildlife and Nature" },
-  { value: "family", label: "Family Friendly" },
-  { value: "city", label: "City Tours" },
-  { value: "shopping", label: "Shopping" },
-  { value: "festival", label: "Festival and Events" },
-  { value: "mountain", label: "Mountain and Hiking" },
-  { value: "cruise", label: "Cruise" },
-  { value: "spiritual", label: "Spiritual and Retreats" },
-  { value: "nightlife", label: "Nightlife" },
-  { value: "photography", label: "Photography" },
-  { value: "ecotourism", label: "Ecotourism" },
-  { value: "winter", label: "Winter and Snow" },
-];
+interface GuideCategoriesFormProps {
+  guideId: string;
+  mainCategory: string | undefined;
+  firstOptionalCategory: string | undefined;
+  secondOptionalCategory: string | undefined;
+}
 
-export function GuideCategoriesForm() {
+export function GuideCategoriesForm({
+  guideId,
+  mainCategory,
+  firstOptionalCategory,
+  secondOptionalCategory,
+}: GuideCategoriesFormProps) {
+  const [categories, setCategories] = useState<any[]>([]);
   const [keyMain, setKeyMain] = useState(+new Date());
   const [keyFirstOptional, setKeyFirstOptional] = useState(+new Date());
   const [keySecondOptional, setKeySecondOptional] = useState(+new Date());
 
   const [selectedMainCategory, setSelectedMainCategory] = useState<
     string | undefined
-  >(undefined);
+  >(mainCategory);
   const [selectedFirstOptionalCategory, setSelectedFirstOptionalCategory] =
-    useState<string | undefined>(undefined);
+    useState<string | undefined>(firstOptionalCategory);
   const [selectedSecondOptionalCategory, setSelectedSecondOptionalCategory] =
-    useState<string | undefined>(undefined);
+    useState<string | undefined>(secondOptionalCategory);
+
+  const [isLoadingMainCategory, setIsLoadingMainCategory] = useState(false);
+  const [isLoadingFirstOptionalCategory, setIsLoadingFirstOptionalCategory] =
+    useState(false);
+  const [isLoadingSecondOptionalCategory, setIsLoadingSecondOptionalCategory] =
+    useState(false);
+
+  useEffect(() => {
+    fetchGuideData();
+  }, []);
+
+  const fetchGuideData = async () => {
+    const response = await getCategories();
+    if (response.success) {
+      setCategories(response.data);
+    }
+  };
 
   const filterCategories = (exclude: string[]) => {
-    return categories.filter((category) => !exclude.includes(category.value));
+    return categories.filter((category) => !exclude.includes(category.id));
   };
 
-  const handleMainCategoryChange = (value: any) => {
-    setSelectedMainCategory(value);
+  const handleMainCategoryChange = async (value: any) => {
+    setIsLoadingMainCategory(true);
+    const response = await updateGuideCategory(
+      guideId,
+      value,
+      true,
+      selectedMainCategory
+    );
+
+    if (response.success) {
+      setSelectedMainCategory(value);
+    }
+    setIsLoadingMainCategory(false);
   };
 
-  const handleFirstOptionalCategoryChange = (value: string) => {
-    setSelectedFirstOptionalCategory(value);
+  const handleFirstOptionalCategoryChange = async (value: string) => {
+    setIsLoadingFirstOptionalCategory(true);
+    const response = await updateGuideCategory(
+      guideId,
+      value,
+      false,
+      selectedFirstOptionalCategory
+    );
+    if (response.success) {
+      setSelectedFirstOptionalCategory(value);
+    }
+    setIsLoadingFirstOptionalCategory(false);
   };
 
-  const handleSecondOptionalCategoryChange = (value: string) => {
-    setSelectedSecondOptionalCategory(value);
+  const handleSecondOptionalCategoryChange = async (value: string) => {
+    setIsLoadingSecondOptionalCategory(true);
+    const response = await updateGuideCategory(
+      guideId,
+      value,
+      false,
+      selectedSecondOptionalCategory
+    );
+    if (response.success) {
+      setSelectedSecondOptionalCategory(value);
+    }
+    setIsLoadingSecondOptionalCategory(false);
   };
 
-  const handleClearMainCategory = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    setSelectedMainCategory(undefined);
-    setKeyMain(+new Date());
-  };
-
-  const handleClearFirstOptionalCategory = (
+  const handleClearMainCategory = async (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.stopPropagation();
-    setSelectedFirstOptionalCategory(undefined);
-    setKeyFirstOptional(+new Date());
+    setIsLoadingMainCategory(true);
+    const response = await deleteGuideCategory(
+      guideId,
+      selectedMainCategory ?? ""
+    );
+    if (response.success) {
+      setSelectedMainCategory(undefined);
+      setKeyMain(+new Date());
+    }
+    setIsLoadingMainCategory(false);
   };
 
-  const handleClearSecondOptionalCategory = (
+  const handleClearFirstOptionalCategory = async (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.stopPropagation();
-    setSelectedSecondOptionalCategory(undefined);
-    setKeySecondOptional(+new Date());
+    setIsLoadingFirstOptionalCategory(true);
+    const response = await deleteGuideCategory(
+      guideId,
+      selectedFirstOptionalCategory ?? ""
+    );
+    if (response.success) {
+      setSelectedFirstOptionalCategory(undefined);
+      setKeyFirstOptional(+new Date());
+    }
+    setIsLoadingFirstOptionalCategory(false);
+  };
+
+  const handleClearSecondOptionalCategory = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.stopPropagation();
+    setIsLoadingSecondOptionalCategory(true);
+    const response = await deleteGuideCategory(
+      guideId,
+      selectedSecondOptionalCategory ?? ""
+    );
+    if (response.success) {
+      setSelectedSecondOptionalCategory(undefined);
+      setKeySecondOptional(+new Date());
+    }
+    setIsLoadingSecondOptionalCategory(false);
   };
 
   return (
@@ -105,6 +171,7 @@ export function GuideCategoriesForm() {
                 key={keyMain}
                 value={selectedMainCategory}
                 defaultValue={selectedMainCategory}
+                disabled={isLoadingMainCategory}
               >
                 <SelectTrigger
                   id="main-category"
@@ -118,15 +185,20 @@ export function GuideCategoriesForm() {
                     selectedSecondOptionalCategory ?? "",
                   ]).map((category) => (
                     <SelectItem
-                      key={category.value}
-                      value={category.value.toString()}
+                      key={category.short_name}
+                      value={category.id.toString()}
                     >
-                      {category.label}
+                      {category.full_name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {selectedMainCategory && (
+              {isLoadingMainCategory && (
+                <div className="flex items-center justify-center">
+                  <LoaderIcon className="h-5 w-5 animate-spin" />
+                </div>
+              )}
+              {!isLoadingMainCategory && selectedMainCategory && (
                 <Button
                   variant="ghost"
                   onClick={handleClearMainCategory}
@@ -148,6 +220,7 @@ export function GuideCategoriesForm() {
                 onValueChange={handleFirstOptionalCategoryChange}
                 value={selectedFirstOptionalCategory}
                 defaultValue={selectedFirstOptionalCategory}
+                disabled={isLoadingFirstOptionalCategory}
               >
                 <SelectTrigger
                   id="first-optional-category"
@@ -160,21 +233,30 @@ export function GuideCategoriesForm() {
                     selectedMainCategory ?? "",
                     selectedSecondOptionalCategory ?? "",
                   ]).map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {category.label}
+                    <SelectItem
+                      key={category.short_name}
+                      value={category.id.toString()}
+                    >
+                      {category.full_name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {selectedFirstOptionalCategory && (
-                <Button
-                  variant="ghost"
-                  onClick={handleClearFirstOptionalCategory}
-                  className="hover:bg-transparent p-0 m-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+              {isLoadingFirstOptionalCategory && (
+                <div className="flex items-center justify-center">
+                  <LoaderIcon className="h-5 w-5 animate-spin" />
+                </div>
               )}
+              {!isLoadingFirstOptionalCategory &&
+                selectedFirstOptionalCategory && (
+                  <Button
+                    variant="ghost"
+                    onClick={handleClearFirstOptionalCategory}
+                    className="hover:bg-transparent p-0 m-0"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
             </div>
           </div>
 
@@ -188,6 +270,7 @@ export function GuideCategoriesForm() {
                 onValueChange={handleSecondOptionalCategoryChange}
                 value={selectedSecondOptionalCategory}
                 defaultValue={selectedSecondOptionalCategory}
+                disabled={isLoadingSecondOptionalCategory}
               >
                 <SelectTrigger
                   id="second-optional-category"
@@ -200,21 +283,30 @@ export function GuideCategoriesForm() {
                     selectedMainCategory ?? "",
                     selectedFirstOptionalCategory ?? "",
                   ]).map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {category.label}
+                    <SelectItem
+                      key={category.short_name}
+                      value={category.id.toString()}
+                    >
+                      {category.full_name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {selectedSecondOptionalCategory && (
-                <Button
-                  variant="ghost"
-                  onClick={handleClearSecondOptionalCategory}
-                  className="hover:bg-transparent p-0 m-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+              {isLoadingSecondOptionalCategory && (
+                <div className="flex items-center justify-center">
+                  <LoaderIcon className="h-5 w-5 animate-spin" />
+                </div>
               )}
+              {!isLoadingSecondOptionalCategory &&
+                selectedSecondOptionalCategory && (
+                  <Button
+                    variant="ghost"
+                    onClick={handleClearSecondOptionalCategory}
+                    className="hover:bg-transparent p-0 m-0"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
             </div>
           </div>
         </div>

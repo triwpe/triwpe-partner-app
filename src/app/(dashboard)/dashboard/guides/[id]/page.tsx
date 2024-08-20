@@ -55,17 +55,26 @@ import { GuideSections } from "../_components/GuideSections";
 import { GuideSectionItems } from "../_components/GuideSectionItems";
 import { GuideImagesUpload } from "../_components/GuideImagesUpload";
 import { GuideImageCover } from "../_components/GuideImageCover";
-import { getGuide } from "@/actions/guide";
+import { getGuide, updateGuide } from "@/actions/guide";
 import { GuideProps } from "../_types/components";
+import { useToast } from "@/components/ui/use-toast";
 
 interface PageParams {
   id: string;
 }
 
 export default function Page({ params }: { params: PageParams }) {
+  const { toast } = useToast();
   const [guideData, setGuideData] = useState<GuideProps | null>(null);
   const [guideId, setGuideId] = useState(params.id);
   const [isLoading, setIsLoading] = useState(true);
+  const [mainCategory, setMainCategory] = useState<string | undefined>();
+  const [firstOptionalCategory, setFirstOptionalCategory] = useState<
+    string | undefined
+  >();
+  const [secondOptionalCategory, setSecondOptionalCategory] = useState<
+    string | undefined
+  >();
 
   const router = useRouter();
 
@@ -90,7 +99,29 @@ export default function Page({ params }: { params: PageParams }) {
 
   const updateGuideData = (updatedData: Partial<GuideProps>) => {
     setGuideData((prev) => ({ ...prev, ...updatedData } as GuideProps));
-    console.log(guideData);
+  };
+
+  const handleSaveGuide = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const response = await updateGuide(
+      guideId,
+      guideData?.title,
+      guideData?.description,
+      guideData?.duration,
+      guideData?.price,
+      guideData?.language,
+      guideData?.status
+    );
+
+    if (!response.success) {
+      console.error("Failed to save guide");
+      return;
+    }
+
+    toast({
+      variant: "success",
+      description: "Guide saved successfully",
+    });
   };
 
   if (isLoading || !guideData) {
@@ -104,7 +135,9 @@ export default function Page({ params }: { params: PageParams }) {
           <Button variant="outline" size="sm">
             Discard
           </Button>
-          <Button size="sm">Save Guide</Button>
+          <Button size="sm" onClick={handleSaveGuide}>
+            Save Guide
+          </Button>
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
@@ -126,7 +159,20 @@ export default function Page({ params }: { params: PageParams }) {
             status={guideData.status}
             onUpdate={updateGuideData}
           />
-          <GuideCategoriesForm />
+          <GuideCategoriesForm
+            guideId={guideData?.id}
+            mainCategory={
+              guideData?.categories?.find((category) => category.is_main)?.id
+            }
+            firstOptionalCategory={
+              guideData?.categories?.filter((category) => !category.is_main)[0]
+                ?.id
+            }
+            secondOptionalCategory={
+              guideData?.categories?.filter((category) => !category.is_main)[1]
+                ?.id
+            }
+          />
           <GuideImageCover />
           <GuideImagesUpload />
         </div>

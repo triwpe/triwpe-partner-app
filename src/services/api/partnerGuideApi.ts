@@ -1,7 +1,7 @@
 'use server';
 
 import { MaptilerLocationCreateRequest } from "@/types/location";
-import { GuideCreateRequest } from "@/types/guide";
+import { GuideCategoryUpsertRequest, GuideCreateRequest, GuideUpdateRequest } from "@/types/guide";
 import { auth } from "@/auth";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_TRIWPE_PARTNER_GUIDE_API_URL;
@@ -49,5 +49,61 @@ const getGuide = async (id: string) => {
   return response;
 }
 
-export { createGuide, createMaptilerLocation, getGuide };
+const updateGuide = async (id: string, data: GuideUpdateRequest) => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/guides/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  return response;
+}
+
+const getCategories = async () => {
+  const response = await fetch(`${API_BASE_URL}/v1/categories`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response;
+}
+
+const updateGuideCategory = async (id: string, data: GuideCategoryUpsertRequest) => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/guides/${id}/categories`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  return response;
+};
+
+const deleteGuideCategory = async (id: string, category_id: string) => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/guides/${id}/categories/${category_id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+  });
+
+  return response;
+}
+
+export { createGuide, createMaptilerLocation, getGuide, updateGuide, getCategories, updateGuideCategory, deleteGuideCategory };
+
 
