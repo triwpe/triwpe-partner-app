@@ -151,7 +151,7 @@ export default function Page({ params }: { params: PageParams }) {
             description={guideData?.description ?? null}
             onUpdate={updateGuideData}
           />
-          <GuideSections />
+          <GuideSections guideId={guideData?.id} />
           <GuideSectionItems />
         </div>
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">

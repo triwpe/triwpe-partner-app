@@ -1,7 +1,7 @@
 'use server';
 
 import { MaptilerLocationCreateRequest } from "@/types/location";
-import { GuideCategoryUpsertRequest, GuideCreateRequest, GuideUpdateRequest } from "@/types/guide";
+import { GuideCategoryUpsertRequest, GuideCreateRequest, GuideSectionCreateRequest, GuideSectionUpdateRequest, GuideUpdateRequest } from "@/types/guide";
 import { auth } from "@/auth";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_TRIWPE_PARTNER_GUIDE_API_URL;
@@ -64,6 +64,64 @@ const updateGuide = async (id: string, data: GuideUpdateRequest) => {
   return response;
 }
 
+const createGuideSection = async (id: string, data: GuideSectionCreateRequest) => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/guides/${id}/sections`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  return response;
+}
+
+const getGuideSections = async (id: string) => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/guides/${id}/sections`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+  });
+
+  return response;
+}
+
+const updateGuideSection = async (id: string, section_id: string, data: GuideSectionUpdateRequest) => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/guides/${id}/sections/${section_id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  return response;
+}
+
+const deleteGuideSection = async (id: string, section_id: string) => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/guides/${id}/sections/${section_id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+  });
+
+  return response;
+}
+
 const getCategories = async () => {
   const response = await fetch(`${API_BASE_URL}/v1/categories`, {
     method: "GET",
@@ -104,6 +162,6 @@ const deleteGuideCategory = async (id: string, category_id: string) => {
   return response;
 }
 
-export { createGuide, createMaptilerLocation, getGuide, updateGuide, getCategories, updateGuideCategory, deleteGuideCategory };
+export { createGuide, createMaptilerLocation, getGuide, updateGuide, getCategories, updateGuideCategory, deleteGuideCategory, getGuideSections, createGuideSection, updateGuideSection, deleteGuideSection };
 
 
