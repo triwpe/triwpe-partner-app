@@ -15,6 +15,7 @@ import { createGuide } from "@/actions/guide";
 export function NewGuideDialog() {
   const router = useRouter();
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [step, setStep] = useState<number>(1);
   const [newGuideLocation, setNewGuideLocation] = useState<any>("");
 
@@ -28,12 +29,14 @@ export function NewGuideDialog() {
   };
 
   const handleSubmit = async (title: string) => {
+    setIsLoading(true);
     const response = await createGuide(title, newGuideLocation.id);
     if (response.success) {
       router.push(`/dashboard/guides/${response.data.id}`);
     } else {
       console.error(response.message);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -52,6 +55,7 @@ export function NewGuideDialog() {
             )}
             {step === 2 && (
               <NewGuideDialogTitleStep
+                isLoading={isLoading}
                 onCancel={handleCancelDialog}
                 onSuccess={handleSubmit}
               />

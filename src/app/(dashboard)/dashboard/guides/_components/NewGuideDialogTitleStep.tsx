@@ -8,13 +8,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChangeEvent, useState } from "react";
+import { Loader2 } from "lucide-react";
 
 interface NewGuideDialogTitleStepProps {
+  isLoading: boolean;
   onSuccess: (title: string) => void;
   onCancel: () => void;
 }
 
 export const NewGuideDialogTitleStep = ({
+  isLoading,
   onSuccess,
   onCancel,
 }: NewGuideDialogTitleStepProps) => {
@@ -54,8 +57,9 @@ export const NewGuideDialogTitleStep = ({
         <Button
           onClick={handleSubmit}
           className="gap-2"
-          disabled={newGuideTitle === ""}
+          disabled={isLoading || newGuideTitle === ""}
         >
+          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Create
         </Button>
       </CardFooter>
