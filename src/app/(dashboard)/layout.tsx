@@ -22,7 +22,7 @@ export default function PrivateLayout({ children }: PrivateLayoutProps) {
   return (
     <div className="flex h-screen">
       <Sidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col bg-neutral-100">
         <Header onMenuClick={() => setSidebarOpen(true)} />
 
         <main className="flex-1 p-4 pl-6 mt-2 overflow-y-scroll">

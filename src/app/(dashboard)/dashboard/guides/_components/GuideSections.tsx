@@ -17,88 +17,34 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUpDown, Plus } from "lucide-react";
-import { useState } from "react";
+import { ArrowUpDown, Loader2, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { NewGuideSectionDialog } from "./NewGuideSectionDialog";
 import { ReorderGuideSectionDialog } from "./ReorderGuideSectionDialog";
+import {
+  deleteGuideSection,
+  getGuideSections,
+  updateGuideSection,
+} from "@/actions/guide";
+import { createNewGuideSectionSchema } from "@/lib/zod";
+import { set } from "zod";
+import { Alert } from "@/components/Alert";
+import { useToast } from "@/components/ui/use-toast";
 
-// const sections: any[] = [];
+interface GuideSectionsProps {
+  guideId: string;
+  onSelectedSectionChange: (
+    value: string | undefined,
+    title?: string | null
+  ) => void;
+}
 
-const sections = [
-  {
-    guide_section_id: "e3ef4f2f-0494-45d9-9f12-4f37a5e242f8",
-    guide_id: "81cbdc22-251f-422f-a183-e5c39d398b9c",
-    menu_title: "Introdução",
-    full_title: "Bem-vindo a Tokyo! \uD83C\uDF06",
-    description:
-      "Uma breve introdução à cidade de Tokyo e o que esperar deste guia. \uD83D\uDDFC",
-    section_order: 1,
-    is_visible_on_demo: true,
-    created_at: "2024-07-12 12:03:51.462722 +00:00",
-    updated_at: null,
-  },
-  {
-    guide_section_id: "34179733-0ce7-4755-aa5e-6debf452240e",
-    guide_id: "81cbdc22-251f-422f-a183-e5c39d398b9c",
-    menu_title: "Transporte",
-    full_title: "Como se locomover em Tokyo \uD83D\uDE89",
-    description:
-      "Dicas e informações sobre o sistema de transporte público em Tokyo, incluindo metrô e ônibus. \uD83D\uDE87",
-    section_order: 2,
-    is_visible_on_demo: false,
-    created_at: "2024-07-12 12:03:56.560820 +00:00",
-    updated_at: null,
-  },
-  {
-    guide_section_id: "e685c236-a67f-4264-833a-20be9c75b2f7",
-    guide_id: "81cbdc22-251f-422f-a183-e5c39d398b9c",
-    menu_title: "Alimentação",
-    full_title: "Onde comer em Tokyo \uD83C\uDF63",
-    description:
-      "Recomendações dos melhores restaurantes e comidas de rua em Tokyo. \uD83C\uDF5C",
-    section_order: 3,
-    is_visible_on_demo: false,
-    created_at: "2024-07-12 12:03:56.609534 +00:00",
-    updated_at: null,
-  },
-  {
-    guide_section_id: "41825a25-11d7-47e5-a4ff-5825c6c65a24",
-    guide_id: "81cbdc22-251f-422f-a183-e5c39d398b9c",
-    menu_title: "Dia 1",
-    full_title: "Primeiro Dia em Tokyo \uD83D\uDDFC",
-    description:
-      "Explorando os principais pontos turísticos de Shinjuku e Shibuya. \uD83C\uDF06",
-    section_order: 4,
-    is_visible_on_demo: false,
-    created_at: "2024-07-12 12:03:56.646745 +00:00",
-    updated_at: null,
-  },
-  {
-    guide_section_id: "a47e1dc9-cae1-4dd0-b3ec-cf8084b6d3e4",
-    guide_id: "81cbdc22-251f-422f-a183-e5c39d398b9c",
-    menu_title: "Dia 2",
-    full_title: "Segundo Dia em Tokyo \uD83C\uDFEF",
-    description: "Visitando Asakusa, Akihabara e Ueno. \uD83C\uDF8E",
-    section_order: 5,
-    is_visible_on_demo: false,
-    created_at: "2024-07-12 12:03:56.687150 +00:00",
-    updated_at: null,
-  },
-  {
-    guide_section_id: "3721546a-7bc5-483f-aacb-fd7585f4f04c",
-    guide_id: "81cbdc22-251f-422f-a183-e5c39d398b9c",
-    menu_title: "Dia 3",
-    full_title: "Terceiro Dia em Tokyo \uD83C\uDF38",
-    description:
-      "Passeios em Odaiba e Roppongi, terminando com uma vista noturna da cidade. \uD83C\uDF03",
-    section_order: 6,
-    is_visible_on_demo: false,
-    created_at: "2024-07-12 12:03:56.729983 +00:00",
-    updated_at: null,
-  },
-];
-
-export function GuideSections() {
+export function GuideSections({
+  guideId,
+  onSelectedSectionChange,
+}: GuideSectionsProps) {
+  const { toast } = useToast();
+  const [sections, setSections] = useState<any[]>([]);
   const [isNewSectionDialogOpen, setIsNewSectionDialogOpen] = useState(false);
   const [isReorderSectionDialogOpen, setIsReorderSectionDialogOpen] =
     useState(false);
@@ -111,18 +57,70 @@ export function GuideSections() {
   const [description, setDescription] = useState("");
   const [visible, setVisible] = useState(false);
 
+  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const [formErrors, setFormErrors] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchGuideSectionData();
+  }, []);
+
+  const fetchGuideSectionData = async (isUpdate?: boolean) => {
+    const response = await getGuideSections(guideId);
+    if (response.success) {
+      setSections(response.data);
+      if (response.data.length > 0) {
+        if (isUpdate) {
+          const findSection = response.data.find(
+            (section: any) => section.id === selectedSection
+          );
+          if (findSection) {
+            setMenuTitle(findSection.menu_title);
+            setFullTitle(findSection.full_title);
+            setDescription(findSection.description);
+            setVisible(findSection.is_visible_on_demo);
+          }
+          return;
+        }
+
+        const orderedSections = response.data.sort(
+          (a: any, b: any) => a.section_order - b.section_order
+        );
+        setSelectedSection(orderedSections[0].id);
+        setMenuTitle(orderedSections[0].menu_title);
+        setFullTitle(orderedSections[0].full_title);
+        setDescription(orderedSections[0].description);
+        setVisible(orderedSections[0].is_visible_on_demo);
+        onSelectedSectionChange(
+          orderedSections[0].id,
+          orderedSections[0].menu_title
+        );
+      } else {
+        onSelectedSectionChange(undefined);
+      }
+    }
+  };
+
   const handleSectionChange = (value: string) => {
     setSelectedSection(value);
 
-    const findSection = sections.find(
-      (section) => section.guide_section_id === value
-    );
+    const findSection = sections.find((section) => section.id === value);
     if (findSection) {
       setMenuTitle(findSection.menu_title);
       setFullTitle(findSection.full_title);
       setDescription(findSection.description);
       setVisible(findSection.is_visible_on_demo);
+      onSelectedSectionChange(value, findSection.menu_title);
     }
+  };
+
+  const handleNewGuideSectionAdded = () => {
+    fetchGuideSectionData();
+    setIsNewSectionDialogOpen(false);
+    toast({
+      variant: "success",
+      description: "Guide section added successfully",
+    });
   };
 
   const handleOpenNewGuideSectionDialog = () => {
@@ -139,6 +137,90 @@ export function GuideSections() {
 
   const handleCloseReorderSectionDialog = () => {
     setIsReorderSectionDialogOpen(false);
+  };
+
+  const handleSubmit = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+
+    setIsLoadingUpdate(true);
+    setFormErrors([]);
+
+    const parseResponse = await createNewGuideSectionSchema.safeParseAsync({
+      menuTitle: menuTitle,
+      fullTitle: fullTitle,
+    });
+
+    if (parseResponse.success) {
+      const updateResponse = await updateGuideSection(
+        guideId,
+        selectedSection ?? "",
+        menuTitle,
+        fullTitle,
+        description,
+        visible
+      );
+      if (updateResponse.success) {
+        toast({
+          variant: "success",
+          description: "Guide section updated successfully",
+        });
+        fetchGuideSectionData(true);
+      } else {
+        toast({
+          variant: "destructive",
+          description: "Failed to update guide section",
+        });
+      }
+    } else {
+      await addError(parseResponse.error);
+    }
+    setIsLoadingUpdate(false);
+  };
+
+  const handleDeleteSection = async () => {
+    setIsLoadingDelete(true);
+    setIsDeleteAlertOpen(true);
+  };
+
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+  const handleConfirmDeleteAlert = async () => {
+    setIsDeleteAlertOpen(false);
+
+    if (!selectedSection) {
+      return;
+    }
+
+    const deleteResponse = await deleteGuideSection(guideId, selectedSection);
+
+    if (deleteResponse.success) {
+      toast({
+        variant: "success",
+        description: "Guide section deleted successfully",
+      });
+      fetchGuideSectionData();
+    } else {
+      toast({
+        variant: "destructive",
+        description: "Failed to delete guide section",
+      });
+    }
+    setIsLoadingDelete(false);
+  };
+
+  const handleCancelDeleteAlert = async () => {
+    setIsDeleteAlertOpen(false);
+    setIsLoadingDelete(false);
+  };
+
+  const addError = async (error: any) => {
+    let errArr: any[] = [];
+    const { errors: err } = error;
+    for (var i = 0; i < err.length; i++) {
+      errArr.push({ for: err[i].path[0], message: err[i].message });
+    }
+    setFormErrors(errArr);
   };
 
   if (sections.length === 0) {
@@ -159,6 +241,8 @@ export function GuideSections() {
             </Button>
             <NewGuideSectionDialog
               isOpen={isNewSectionDialogOpen}
+              guideId={guideId}
+              onSuccess={handleNewGuideSectionAdded}
               onCancel={handleCloseNewGuideSectionDialog}
             />
           </div>
@@ -190,10 +274,7 @@ export function GuideSections() {
               </SelectTrigger>
               <SelectContent>
                 {sections.map((section) => (
-                  <SelectItem
-                    key={section.guide_section_id}
-                    value={section.guide_section_id}
-                  >
+                  <SelectItem key={section.id} value={section.id}>
                     {section.menu_title}
                   </SelectItem>
                 ))}
@@ -206,6 +287,8 @@ export function GuideSections() {
               </Button>
               <NewGuideSectionDialog
                 isOpen={isNewSectionDialogOpen}
+                guideId={guideId}
+                onSuccess={handleNewGuideSectionAdded}
                 onCancel={handleCloseNewGuideSectionDialog}
               />
               <Button size="sm" onClick={handleOpenReorderSectionDialog}>
@@ -223,25 +306,49 @@ export function GuideSections() {
             <>
               <div className="grid gap-3">
                 <Label htmlFor="name">Menu Title</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  className="w-full"
-                  value={menuTitle}
-                  onChange={(e) => setMenuTitle(e.target.value)}
-                  placeholder="Enter the menu title"
-                />
+                <div>
+                  <Input
+                    id="name"
+                    type="text"
+                    className={`w-full ${
+                      formErrors.some((error) => error.for === "menuTitle")
+                        ? "border-red-600"
+                        : ""
+                    }`}
+                    value={menuTitle}
+                    onChange={(e) => setMenuTitle(e.target.value)}
+                    placeholder="Enter the menu title"
+                  />
+                  <div className="mt-1 ml-1 text-xs text-red-600">
+                    {
+                      formErrors.find((error) => error.for === "menuTitle")
+                        ?.message
+                    }
+                  </div>
+                </div>
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="name">Full Title</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  className="w-full"
-                  value={fullTitle}
-                  onChange={(e) => setFullTitle(e.target.value)}
-                  placeholder="Enter the full title"
-                />
+                <div>
+                  <Input
+                    id="name"
+                    type="text"
+                    className={`w-full ${
+                      formErrors.some((error) => error.for === "fullTitle")
+                        ? "border-red-600"
+                        : ""
+                    }`}
+                    value={fullTitle}
+                    onChange={(e) => setFullTitle(e.target.value)}
+                    placeholder="Enter the full title"
+                  />
+                  <div className="mt-1 ml-1 text-xs text-red-600">
+                    {
+                      formErrors.find((error) => error.for === "fullTitle")
+                        ?.message
+                    }
+                  </div>
+                </div>
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="description">Description</Label>
@@ -262,8 +369,41 @@ export function GuideSections() {
                 <Label htmlFor="airplane-mode">Visible on demo?</Label>
               </div>
               <div className="flex gap-2">
-                <Button size="default">Update Section</Button>
-                <Button size="default">Delete Section</Button>
+                <Button
+                  size="default"
+                  onClick={handleSubmit}
+                  disabled={isLoadingUpdate}
+                >
+                  {isLoadingUpdate ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                      Updating...
+                    </>
+                  ) : (
+                    "Update Section"
+                  )}
+                </Button>
+                <Button
+                  size="default"
+                  onClick={handleDeleteSection}
+                  disabled={isLoadingDelete}
+                >
+                  {isLoadingDelete ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                      Deleting...
+                    </>
+                  ) : (
+                    "Delete Section"
+                  )}
+                </Button>
+                <Alert
+                  open={isDeleteAlertOpen}
+                  title="Are you absolutely sure?"
+                  description="This action cannot be undone. This will permanently delete your sections and their items."
+                  onConfirm={handleConfirmDeleteAlert}
+                  onCancel={handleCancelDeleteAlert}
+                />
               </div>
             </>
           )}

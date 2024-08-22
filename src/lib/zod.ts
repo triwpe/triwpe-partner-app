@@ -69,3 +69,12 @@ export const updatePasswordSchema = object({
       message: "Password must contain at least one special character",
     }),
 });
+
+export const createNewGuideSectionSchema = object({
+  menuTitle: string({ required_error: "Menu title is required" })
+    .min(1, "Menu title is required")
+    .max(20, "Menu title must be less than 20 characters"),
+  fullTitle: string({ required_error: "Full title is required" })
+    .min(1, "Full title is required")
+    .max(50, "Full title must be less than 50 characters")
+});

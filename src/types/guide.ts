@@ -17,6 +17,20 @@ export interface GuideUpdateRequest{
   status?: string;
 }
 
+export interface GuideSectionCreateRequest{
+  menu_title: string;
+  full_title: string;
+  description?: string;
+  is_visible_on_demo: boolean;
+}
+
+export interface GuideSectionUpdateRequest{
+  menu_title?: string;
+  full_title?: string;
+  description?: string;
+  is_visible_on_demo?: boolean;
+}
+
 export interface GuideCategoryUpsertRequest{
   category_id: string;
   is_main: boolean;
