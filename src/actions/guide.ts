@@ -1,6 +1,6 @@
 'use server';
 
-import { GuideCreateRequest, GuideResponse, GuideSectionCreateRequest, GuideSectionUpdateRequest, GuideUpdateRequest } from "@/types/guide";
+import { GuideCreateRequest, GuideResponse, GuideSectionCreateRequest, GuideSectionUpdateRequest, GuideUpdateRequest, SectionItemCreateRequest, SectionItemUpdateRequest } from "@/types/guide";
 import * as partnerGuideApi from "@/services/api/partnerGuideApi";
 
 
@@ -129,3 +129,73 @@ export async function deleteGuideSection(id: string, section_id: string) {
     return { success: false, message: error.message };
   }
 }
+
+//SECTION ITEM START
+export async function createSectionItem(guide_section_id: string, title: string, description: string, is_visible_on_demo: boolean) {
+  const data: SectionItemCreateRequest = {
+    title: title,
+    description: description,
+    is_visible_on_demo: is_visible_on_demo,
+  };
+
+  try {
+    const response = await partnerGuideApi.createSectionItem(guide_section_id, data);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.detail || "Something went wrong" };
+    }
+
+    return { success: true, data: await response.json() };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
+export async function getSectionItems(guide_section_id: string) {
+  try {
+    const response = await partnerGuideApi.getSectionItems(guide_section_id);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.detail || "Something went wrong" };
+    }
+
+    return { success: true, data: await response.json() };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
+export async function updateSectionItem(guide_section_id: string, item_id: string, title?: string, description?: string, is_visible_on_demo?: boolean) {
+  const data: SectionItemUpdateRequest = {
+    title: title,
+    description: description,
+    is_visible_on_demo: is_visible_on_demo,
+  };
+
+  try {
+    const response = await partnerGuideApi.updateSectionItem(guide_section_id, item_id, data);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.detail || "Something went wrong" };
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
+export async function deleteSectionItem(guide_section_id: string, item_id: string) {
+  try {
+    const response = await partnerGuideApi.deleteSectionItem(guide_section_id, item_id);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.detail || "Something went wrong" };
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+//SECTION ITEM END

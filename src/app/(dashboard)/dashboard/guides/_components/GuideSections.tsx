@@ -185,7 +185,7 @@ export function GuideSections({
   };
 
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
-  const handleConfirmDeleteAlert = async () => {
+  const handleConfirmDeleteAlert = async (): Promise<void> => {
     setIsDeleteAlertOpen(false);
 
     if (!selectedSection) {

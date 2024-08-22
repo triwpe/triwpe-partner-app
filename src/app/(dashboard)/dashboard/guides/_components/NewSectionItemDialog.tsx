@@ -22,37 +22,82 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { createNewSectionItemSchema } from "@/lib/zod";
+import { createSectionItem } from "@/actions/guide";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Loader2, X } from "lucide-react";
 
 interface NewSectionItemsDialogProps {
   isOpen: boolean;
+  sectionId: string;
+  sectionTitle: string | null;
+  onSuccess: () => void;
   onCancel: () => void;
 }
 
 export function NewSectionItemDialog({
   isOpen,
+  sectionId,
+  sectionTitle,
+  onSuccess,
   onCancel,
 }: NewSectionItemsDialogProps) {
-  const sectionTitle = "Alimentação";
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [isVisibleOnDemo, setIsVisibleOnDemo] = useState<boolean>(false);
 
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [formErrors, setFormErrors] = useState<any[]>([]);
+  const [createError, setCreateError] = useState<string | null>(null);
 
-  const [step, setStep] = useState<number>(1);
-  const [newGuideLocation, setNewGuideLocation] = useState<any>("");
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    setIsLoading(true);
+    setFormErrors([]);
+    setCreateError(null);
+
+    const parseResponse = await createNewSectionItemSchema.safeParseAsync({
+      description: description,
+    });
+
+    if (parseResponse.success) {
+      const createResponse = await createSectionItem(
+        sectionId,
+        title,
+        description,
+        isVisibleOnDemo
+      );
+      if (createResponse.success) {
+        setTitle("");
+        setDescription("");
+        setIsVisibleOnDemo(false);
+        onSuccess();
+      } else {
+        setCreateError("Something went wrong. Please try again.");
+      }
+    } else {
+      await addError(parseResponse.error);
+    }
+    setIsLoading(false);
+  };
 
   const handleCancelDialog = async () => {
-    router.replace("/dashboard");
+    setFormErrors([]);
+    setCreateError(null);
+    setTitle("");
+    setDescription("");
+    setIsVisibleOnDemo(false);
+    onCancel();
   };
 
-  const handleLocationSelected = async (location: any) => {
-    setNewGuideLocation(location);
-    setStep(2);
-  };
-
-  const handleSubmit = async (title: string) => {
-    const newGuideTitle: string = title;
-    console.log(newGuideTitle);
-    console.log(newGuideLocation.id);
-    console.log(newGuideLocation.place_name);
+  const addError = async (error: any) => {
+    let errArr: any[] = [];
+    const { errors: err } = error;
+    for (var i = 0; i < err.length; i++) {
+      errArr.push({ for: err[i].path[0], message: err[i].message });
+    }
+    setFormErrors(errArr);
   };
 
   return (
@@ -64,42 +109,86 @@ export function NewSectionItemDialog({
           </VisuallyHidden.Root>
           <AlertDialogDescription>
             <Card className="border-0 shadow-none">
-              <CardHeader>
-                <CardTitle className="text-2xl">
-                  Add a new item for &ldquo;{sectionTitle}&rdquo; section
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid mt-4 gap-6 px-3">
-                  <div className="grid gap-3">
-                    <Label htmlFor="name">Title</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      className="w-full"
-                      placeholder="Enter the full title"
-                    />
+              <form onSubmit={handleSubmit}>
+                <CardHeader>
+                  <CardTitle className="text-2xl">
+                    Add a new item for &ldquo;{sectionTitle}&rdquo; section
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid mt-4 gap-6 px-3">
+                    {createError && (
+                      <Alert className="bg-red-50 border-red-300 text-red-400">
+                        <X color="#EF5350" className="h-4 w-4" />
+                        <AlertTitle className="font-bold">Hey!</AlertTitle>
+                        <AlertDescription>{createError}</AlertDescription>
+                      </Alert>
+                    )}
+                    <div className="grid gap-3">
+                      <Label htmlFor="name">Title</Label>
+                      <Input
+                        id="title"
+                        name="title"
+                        type="text"
+                        className="w-full"
+                        placeholder="Enter the full title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                      />
+                    </div>
+                    <div className="grid gap-3">
+                      <Label htmlFor="description">Description</Label>
+                      <div>
+                        <Textarea
+                          id="description"
+                          name="description"
+                          placeholder="Write a description for your guide"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          className={`h-32 ${
+                            formErrors.some(
+                              (error) => error.for === "description"
+                            )
+                              ? "border-red-600"
+                              : ""
+                          }`}
+                        />
+                        <div className="mt-1 ml-1 text-xs text-red-600">
+                          {
+                            formErrors.find(
+                              (error) => error.for === "description"
+                            )?.message
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        id="is-visible-on-demo"
+                        name="is-visible-on-demo"
+                        checked={isVisibleOnDemo}
+                        onCheckedChange={(e) => setIsVisibleOnDemo(e)}
+                      />
+                      <Label htmlFor="airplane-mode">Visible on demo?</Label>
+                    </div>
                   </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Write a description for your guide"
-                      className="h-32"
-                    />
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch id="airplane-mode" />
-                    <Label htmlFor="airplane-mode">Visible on demo?</Label>
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="gap-2 justify-end">
-                <Button variant="outline" onClick={onCancel}>
-                  Cancel
-                </Button>
-                <Button className="gap-2">Add</Button>
-              </CardFooter>
+                </CardContent>
+                <CardFooter className="gap-2 justify-end">
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={handleCancelDialog}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Add Item
+                  </Button>
+                </CardFooter>
+              </form>
             </Card>
           </AlertDialogDescription>
         </AlertDialogHeader>

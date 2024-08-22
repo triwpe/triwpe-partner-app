@@ -51,3 +51,26 @@ export interface GuideResponse{
   updated_at?: Date;
 }
 
+export interface SectionItemCreateRequest{
+  title?: string;
+  description: string;
+  is_visible_on_demo: boolean;
+}
+
+export interface SectionItemUpdateRequest{
+  title?: string;
+  description?: string;
+  is_visible_on_demo?: boolean;
+}
+
+export interface SectionItemResponse{
+  id: string;
+  guide_section_id: string;
+  title?: string;
+  description: string;
+  is_visible_on_demo: boolean;
+  section_order: number;
+  created_at: Date;
+  updated_at?: Date;
+}
+
