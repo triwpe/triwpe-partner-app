@@ -24,7 +24,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { createNewGuideSectionSchema } from "@/lib/zod";
 import { createGuideSection } from "@/actions/guide";
-import { Loader, Loader2 } from "lucide-react";
+import { Loader, Loader2, Terminal, TriangleAlert, X } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { set } from "zod";
 
 interface NewGuideSectionDialogProps {
   isOpen: boolean;
@@ -48,12 +50,14 @@ export function NewGuideSectionDialog({
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<any[]>([]);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setIsLoading(true);
     setFormErrors([]);
+    setCreateError(null);
 
     const parseResponse = await createNewGuideSectionSchema.safeParseAsync({
       menuTitle: menuTitle,
@@ -75,7 +79,7 @@ export function NewGuideSectionDialog({
         setIsVisibleOnDemo(false);
         onSuccess();
       } else {
-        console.log("Failed to create guide section");
+        setCreateError("Something went wrong. Please try again.");
       }
     } else {
       await addError(parseResponse.error);
@@ -85,6 +89,7 @@ export function NewGuideSectionDialog({
 
   const handleCancelDialog = async () => {
     setFormErrors([]);
+    setCreateError(null);
     setMenuTitle("");
     setFullTitle("");
     setDescription("");
@@ -118,6 +123,13 @@ export function NewGuideSectionDialog({
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-6">
+                    {createError && (
+                      <Alert className="bg-red-50 border-red-300 text-red-400">
+                        <X color="#EF5350" className="h-4 w-4" />
+                        <AlertTitle className="font-bold">Hey!</AlertTitle>
+                        <AlertDescription>{createError}</AlertDescription>
+                      </Alert>
+                    )}
                     <div className="grid gap-3">
                       <Label htmlFor="name">Menu Title</Label>
                       <div>

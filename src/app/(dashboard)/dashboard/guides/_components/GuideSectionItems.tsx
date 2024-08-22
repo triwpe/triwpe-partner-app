@@ -30,45 +30,17 @@ import { ReorderSectionItemDialog } from "./ReorderSectionItemDialog";
 import { DropzoneOptions } from "react-dropzone";
 import Image from "next/image";
 
-const items = [
-  {
-    section_item_id: "a8480a03-3dba-4a8a-8e9f-58dee522da7e",
-    guide_section_id: "e685c236-a67f-4264-833a-20be9c75b2f7",
-    title: "Sushi \uD83C\uDF63",
-    description:
-      "Tokyo é famosa por seus sushis frescos e deliciosos. Visite o mercado de peixe Tsukiji para uma experiência autêntica.",
-    item_order: 1,
-    is_visible_on_demo: true,
-    created_at: "2024-07-12 12:31:55.847793 +00:00",
-    updated_at: null,
-  },
-  {
-    section_item_id: "44107271-402b-48bc-ada3-0e1f9e1d70ef",
-    guide_section_id: "e685c236-a67f-4264-833a-20be9c75b2f7",
-    title: "Ramen \uD83C\uDF5C",
-    description:
-      "Não deixe de provar um autêntico ramen japonês. Alguns dos melhores lugares para comer ramen são Ichiran e Ippudo.",
-    item_order: 2,
-    is_visible_on_demo: false,
-    created_at: "2024-07-12 12:31:55.847793 +00:00",
-    updated_at: null,
-  },
-  {
-    section_item_id: "01b9ae7e-fff6-41cc-8178-15059aabff63",
-    guide_section_id: "e685c236-a67f-4264-833a-20be9c75b2f7",
-    title: "Comida de Rua \uD83C\uDF62",
-    description:
-      "Explore as barracas de comida de rua em áreas como Shinjuku e Asakusa para provar iguarias como takoyaki e yakitori.",
-    item_order: 3,
-    is_visible_on_demo: false,
-    created_at: "2024-07-12 12:31:55.847793 +00:00",
-    updated_at: null,
-  },
-];
+const items: any[] = [];
 
-// const items: any[] = [];
+interface GuideSectionItemProps {
+  selectedSectionId: string | undefined;
+  guideSectionTitle: string | null;
+}
 
-export function GuideSectionItems() {
+export function GuideSectionItems({
+  selectedSectionId,
+  guideSectionTitle,
+}: GuideSectionItemProps) {
   const sectionTitle = "Alimentação";
   const [files, setFiles] = useState<File[] | null>(null);
 
@@ -137,14 +109,23 @@ export function GuideSectionItems() {
     setFiles(values);
   };
 
+  console.log("Selected Section ID:", selectedSectionId);
+
+  if (selectedSectionId === undefined) {
+    return <></>;
+  }
+
   if (items.length === 0) {
     return (
       <Card>
         <CardContent>
           <div className="flex flex-col items-center justify-center mt-16">
             <p className="text-gray-500">
-              The &ldquo;{sectionTitle}&rdquo; section is empty. Add your first
-              item to get started! 🎯
+              The{" "}
+              <span className="font-bold">
+                &ldquo;{guideSectionTitle}&rdquo;{" "}
+              </span>
+              section is empty. Add your first item to get started! 🎯
             </p>
             <Button
               size="sm"

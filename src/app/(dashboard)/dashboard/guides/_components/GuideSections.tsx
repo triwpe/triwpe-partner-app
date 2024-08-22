@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUpDown, Plus } from "lucide-react";
+import { ArrowUpDown, Loader2, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NewGuideSectionDialog } from "./NewGuideSectionDialog";
 import { ReorderGuideSectionDialog } from "./ReorderGuideSectionDialog";
@@ -27,12 +27,23 @@ import {
   updateGuideSection,
 } from "@/actions/guide";
 import { createNewGuideSectionSchema } from "@/lib/zod";
+import { set } from "zod";
+import { Alert } from "@/components/Alert";
+import { useToast } from "@/components/ui/use-toast";
 
 interface GuideSectionsProps {
   guideId: string;
+  onSelectedSectionChange: (
+    value: string | undefined,
+    title?: string | null
+  ) => void;
 }
 
-export function GuideSections({ guideId }: GuideSectionsProps) {
+export function GuideSections({
+  guideId,
+  onSelectedSectionChange,
+}: GuideSectionsProps) {
+  const { toast } = useToast();
   const [sections, setSections] = useState<any[]>([]);
   const [isNewSectionDialogOpen, setIsNewSectionDialogOpen] = useState(false);
   const [isReorderSectionDialogOpen, setIsReorderSectionDialogOpen] =
@@ -46,18 +57,32 @@ export function GuideSections({ guideId }: GuideSectionsProps) {
   const [description, setDescription] = useState("");
   const [visible, setVisible] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   const [formErrors, setFormErrors] = useState<any[]>([]);
 
   useEffect(() => {
     fetchGuideSectionData();
   }, []);
 
-  const fetchGuideSectionData = async () => {
+  const fetchGuideSectionData = async (isUpdate?: boolean) => {
     const response = await getGuideSections(guideId);
     if (response.success) {
       setSections(response.data);
       if (response.data.length > 0) {
+        if (isUpdate) {
+          const findSection = response.data.find(
+            (section: any) => section.id === selectedSection
+          );
+          if (findSection) {
+            setMenuTitle(findSection.menu_title);
+            setFullTitle(findSection.full_title);
+            setDescription(findSection.description);
+            setVisible(findSection.is_visible_on_demo);
+          }
+          return;
+        }
+
         const orderedSections = response.data.sort(
           (a: any, b: any) => a.section_order - b.section_order
         );
@@ -66,6 +91,12 @@ export function GuideSections({ guideId }: GuideSectionsProps) {
         setFullTitle(orderedSections[0].full_title);
         setDescription(orderedSections[0].description);
         setVisible(orderedSections[0].is_visible_on_demo);
+        onSelectedSectionChange(
+          orderedSections[0].id,
+          orderedSections[0].menu_title
+        );
+      } else {
+        onSelectedSectionChange(undefined);
       }
     }
   };
@@ -79,12 +110,17 @@ export function GuideSections({ guideId }: GuideSectionsProps) {
       setFullTitle(findSection.full_title);
       setDescription(findSection.description);
       setVisible(findSection.is_visible_on_demo);
+      onSelectedSectionChange(value, findSection.menu_title);
     }
   };
 
   const handleNewGuideSectionAdded = () => {
     fetchGuideSectionData();
     setIsNewSectionDialogOpen(false);
+    toast({
+      variant: "success",
+      description: "Guide section added successfully",
+    });
   };
 
   const handleOpenNewGuideSectionDialog = () => {
@@ -103,10 +139,12 @@ export function GuideSections({ guideId }: GuideSectionsProps) {
     setIsReorderSectionDialogOpen(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     e.preventDefault();
 
-    setIsLoading(true);
+    setIsLoadingUpdate(true);
     setFormErrors([]);
 
     const parseResponse = await createNewGuideSectionSchema.safeParseAsync({
@@ -124,17 +162,32 @@ export function GuideSections({ guideId }: GuideSectionsProps) {
         visible
       );
       if (updateResponse.success) {
-        fetchGuideSectionData();
+        toast({
+          variant: "success",
+          description: "Guide section updated successfully",
+        });
+        fetchGuideSectionData(true);
       } else {
-        console.log("Failed to update guide section");
+        toast({
+          variant: "destructive",
+          description: "Failed to update guide section",
+        });
       }
     } else {
       await addError(parseResponse.error);
     }
-    setIsLoading(false);
+    setIsLoadingUpdate(false);
   };
 
   const handleDeleteSection = async () => {
+    setIsLoadingDelete(true);
+    setIsDeleteAlertOpen(true);
+  };
+
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+  const handleConfirmDeleteAlert = async () => {
+    setIsDeleteAlertOpen(false);
+
     if (!selectedSection) {
       return;
     }
@@ -142,10 +195,23 @@ export function GuideSections({ guideId }: GuideSectionsProps) {
     const deleteResponse = await deleteGuideSection(guideId, selectedSection);
 
     if (deleteResponse.success) {
+      toast({
+        variant: "success",
+        description: "Guide section deleted successfully",
+      });
       fetchGuideSectionData();
     } else {
-      console.log("Failed to delete guide section");
+      toast({
+        variant: "destructive",
+        description: "Failed to delete guide section",
+      });
     }
+    setIsLoadingDelete(false);
+  };
+
+  const handleCancelDeleteAlert = async () => {
+    setIsDeleteAlertOpen(false);
+    setIsLoadingDelete(false);
   };
 
   const addError = async (error: any) => {
@@ -238,60 +304,107 @@ export function GuideSections({ guideId }: GuideSectionsProps) {
           </div>
           {selectedSection && (
             <>
-              <form className="grid gap-6" onSubmit={handleSubmit}>
-                <div className="grid gap-3">
-                  <Label htmlFor="name">Menu Title</Label>
+              <div className="grid gap-3">
+                <Label htmlFor="name">Menu Title</Label>
+                <div>
                   <Input
                     id="name"
                     type="text"
-                    className="w-full"
+                    className={`w-full ${
+                      formErrors.some((error) => error.for === "menuTitle")
+                        ? "border-red-600"
+                        : ""
+                    }`}
                     value={menuTitle}
                     onChange={(e) => setMenuTitle(e.target.value)}
                     placeholder="Enter the menu title"
                   />
+                  <div className="mt-1 ml-1 text-xs text-red-600">
+                    {
+                      formErrors.find((error) => error.for === "menuTitle")
+                        ?.message
+                    }
+                  </div>
                 </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="name">Full Title</Label>
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="name">Full Title</Label>
+                <div>
                   <Input
                     id="name"
                     type="text"
-                    className="w-full"
+                    className={`w-full ${
+                      formErrors.some((error) => error.for === "fullTitle")
+                        ? "border-red-600"
+                        : ""
+                    }`}
                     value={fullTitle}
                     onChange={(e) => setFullTitle(e.target.value)}
                     placeholder="Enter the full title"
                   />
+                  <div className="mt-1 ml-1 text-xs text-red-600">
+                    {
+                      formErrors.find((error) => error.for === "fullTitle")
+                        ?.message
+                    }
+                  </div>
                 </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Write a description for your guide"
-                    className="min-h-32"
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="airplane-mode"
-                    checked={visible}
-                    onCheckedChange={(e) => setVisible(e)}
-                  />
-                  <Label htmlFor="airplane-mode">Visible on demo?</Label>
-                </div>
-                <div className="flex gap-2">
-                  <Button size="default" type="submit">
-                    Update Section
-                  </Button>
-                  <Button
-                    size="default"
-                    type="button"
-                    onClick={handleDeleteSection}
-                  >
-                    Delete Section
-                  </Button>
-                </div>
-              </form>
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Write a description for your guide"
+                  className="min-h-32"
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="airplane-mode"
+                  checked={visible}
+                  onCheckedChange={(e) => setVisible(e)}
+                />
+                <Label htmlFor="airplane-mode">Visible on demo?</Label>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  size="default"
+                  onClick={handleSubmit}
+                  disabled={isLoadingUpdate}
+                >
+                  {isLoadingUpdate ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                      Updating...
+                    </>
+                  ) : (
+                    "Update Section"
+                  )}
+                </Button>
+                <Button
+                  size="default"
+                  onClick={handleDeleteSection}
+                  disabled={isLoadingDelete}
+                >
+                  {isLoadingDelete ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                      Deleting...
+                    </>
+                  ) : (
+                    "Delete Section"
+                  )}
+                </Button>
+                <Alert
+                  open={isDeleteAlertOpen}
+                  title="Are you absolutely sure?"
+                  description="This action cannot be undone. This will permanently delete your sections and their items."
+                  onConfirm={handleConfirmDeleteAlert}
+                  onCancel={handleCancelDeleteAlert}
+                />
+              </div>
             </>
           )}
         </div>

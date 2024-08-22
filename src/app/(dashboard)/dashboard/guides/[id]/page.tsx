@@ -58,6 +58,7 @@ import { GuideImageCover } from "../_components/GuideImageCover";
 import { getGuide, updateGuide } from "@/actions/guide";
 import { GuideProps } from "../_types/components";
 import { useToast } from "@/components/ui/use-toast";
+import { Alert } from "@/components/ui/alert";
 
 interface PageParams {
   id: string;
@@ -75,6 +76,10 @@ export default function Page({ params }: { params: PageParams }) {
   const [secondOptionalCategory, setSecondOptionalCategory] = useState<
     string | undefined
   >();
+  const [selectedSection, setSelectedSection] = useState<string | undefined>();
+  const [selectedSectionTitle, setSelectedSectionTitle] = useState<
+    string | null
+  >(null);
 
   const router = useRouter();
 
@@ -124,6 +129,16 @@ export default function Page({ params }: { params: PageParams }) {
     });
   };
 
+  const handleSectionChange = (
+    value: string | undefined,
+    title?: string | null
+  ) => {
+    setSelectedSection(value);
+    if (title) {
+      setSelectedSectionTitle(title);
+    }
+  };
+
   if (isLoading || !guideData) {
     return <div>Loading...</div>;
   }
@@ -151,8 +166,14 @@ export default function Page({ params }: { params: PageParams }) {
             description={guideData?.description ?? null}
             onUpdate={updateGuideData}
           />
-          <GuideSections guideId={guideData?.id} />
-          <GuideSectionItems />
+          <GuideSections
+            guideId={guideData?.id}
+            onSelectedSectionChange={handleSectionChange}
+          />
+          <GuideSectionItems
+            selectedSectionId={selectedSection}
+            guideSectionTitle={selectedSectionTitle}
+          />
         </div>
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
           <GuideStatusForm
