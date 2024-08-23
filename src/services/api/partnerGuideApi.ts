@@ -233,6 +233,20 @@ const updateSectionItem = async (section_id: string, item_id: string, data: ApiS
   return response;
 }
 
-export { createGuide, createMaptilerLocation, getGuide, updateGuide, getCategories, updateGuideCategory, deleteGuideCategory, getGuideSections, createGuideSection, updateGuideSection, deleteGuideSection, createSectionItem, getSectionItems, updateSectionItem, deleteSectionItem };
+const getGuides = async (): Promise<Response> => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/guides`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+  });
+
+  return response;
+};
+
+export { createGuide, createMaptilerLocation, getGuide, updateGuide, getCategories, updateGuideCategory, deleteGuideCategory, getGuideSections, createGuideSection, updateGuideSection, deleteGuideSection, createSectionItem, getSectionItems, updateSectionItem, deleteSectionItem, getGuides };
 
 

@@ -31,7 +31,9 @@ export function GuideSections({
   sections,
   onSectionUpdate,
 }: GuideSectionsProps) {
-  const guideId = sections[0].guideId;
+  console.log(sections);
+  const guideId: string | undefined =
+    sections.length > 0 ? sections[0].guideId : undefined;
 
   const { toast } = useToast();
 
@@ -82,7 +84,7 @@ export function GuideSections({
             </Button>
             <NewGuideSectionDialog
               isOpen={isNewSectionDialogOpen}
-              guideId={guideId}
+              guideId={guideId ? guideId : ""}
               onSuccess={handleNewGuideSectionAdded}
               onCancel={handleCloseNewGuideSectionDialog}
             />
@@ -108,7 +110,7 @@ export function GuideSections({
               </Button>
               <NewGuideSectionDialog
                 isOpen={isNewSectionDialogOpen}
-                guideId={guideId}
+                guideId={guideId ? guideId : ""}
                 onSuccess={handleNewGuideSectionAdded}
                 onCancel={handleCloseNewGuideSectionDialog}
               />
