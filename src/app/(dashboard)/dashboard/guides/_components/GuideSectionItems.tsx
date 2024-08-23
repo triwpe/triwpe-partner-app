@@ -142,102 +142,110 @@ export function GuideSectionItems({
       <CardContent>
         <div className="grid gap-6">
           <Accordion type="single" collapsible className="w-full">
-            {sections.map((section) => (
-              <AccordionItem
-                className="border-0 mb-2"
-                key={section.id}
-                value={section.id}
-              >
-                <AccordionTrigger className="bg-slate-200 px-2 rounded-md no-underline hover:no-underline text-slate-600">
-                  {section.menuTitle}
-                </AccordionTrigger>
-                <AccordionContent className="pb-0">
-                  <div className="grid mt-2 gap-6 pl-2">
-                    {section.items.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center mt-16">
-                        <p className="text-gray-500">
-                          The{" "}
-                          <span className="font-bold">
-                            &ldquo;{section.menuTitle}&rdquo;{" "}
-                          </span>
-                          section is empty. Add your first item to get started!
-                          🎯
-                        </p>
-                        <Button
-                          size="sm"
-                          className="mt-8 mb-8"
-                          onClick={handleOpenNewSectionItemDialog}
-                        >
-                          Add First Item
-                        </Button>
-                        <NewSectionItemDialog
-                          isOpen={isNewItemDialogOpen}
-                          sectionId={section.id}
-                          sectionTitle={section.menuTitle}
-                          onSuccess={handleNewSectionItemAdded}
-                          onCancel={handleCloseNewSectionItemDialog}
-                        />
-                      </div>
-                    ) : (
-                      <>
-                        <div className="flex justify-end mt-2 ">
-                          <div className="flex gap-1">
-                            <Button
-                              size="sm"
-                              onClick={handleOpenNewSectionItemDialog}
-                            >
-                              <Plus className="h-4 w-4" />
-                              Add Section
-                            </Button>
-                            <NewSectionItemDialog
-                              sectionId={section.id}
-                              sectionTitle={section.menuTitle}
-                              isOpen={isNewItemDialogOpen}
-                              onSuccess={handleNewSectionItemAdded}
-                              onCancel={handleCloseNewSectionItemDialog}
-                            />
-                            <Button
-                              size="sm"
-                              onClick={handleOpenReorderItemDialog}
-                              disabled={section.items.length < 2}
-                            >
-                              <ArrowUpDown className="h-4 w-4" />
-                              Reorder
-                            </Button>
-                            <ReorderSectionItemDialog
-                              isOpen={isReorderItemDialogOpen}
-                              onCancel={handleCloseReorderItemDialog}
-                              data={items}
-                            />
-                          </div>
+            {sections
+              .sort((a, b) => a.sectionOrder - b.sectionOrder)
+              .map((section) => (
+                <AccordionItem
+                  className="border-0 mb-2"
+                  key={section.id}
+                  value={section.id}
+                >
+                  <AccordionTrigger className="bg-slate-200 px-2 rounded-md no-underline hover:no-underline text-slate-600">
+                    {section.menuTitle}
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-0">
+                    <div className="grid mt-2 gap-6 pl-2">
+                      {section.items.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center mt-16">
+                          <p className="text-gray-500">
+                            The{" "}
+                            <span className="font-bold">
+                              &ldquo;{section.menuTitle}&rdquo;{" "}
+                            </span>
+                            section is empty. Add your first item to get
+                            started! 🎯
+                          </p>
+                          <Button
+                            size="sm"
+                            className="mt-8 mb-8"
+                            onClick={handleOpenNewSectionItemDialog}
+                          >
+                            Add First Item
+                          </Button>
+                          <NewSectionItemDialog
+                            isOpen={isNewItemDialogOpen}
+                            sectionId={section.id}
+                            sectionTitle={section.menuTitle}
+                            onSuccess={handleNewSectionItemAdded}
+                            onCancel={handleCloseNewSectionItemDialog}
+                          />
                         </div>
-                        <Accordion type="single" collapsible className="w-full">
-                          {section.items.map((item) => (
-                            <AccordionItem
-                              className="border-0 mb-2"
-                              key={item.id}
-                              value={item.id}
-                            >
-                              <AccordionTrigger className="bg-slate-100 px-2 rounded-md no-underline hover:no-underline text-slate-600">
-                                {item.title === ""
-                                  ? "Untitled Item"
-                                  : item.title}
-                              </AccordionTrigger>
-                              <AccordionContent>
-                                <GuideSectionItemUpdateForm
-                                  item={item}
-                                  onItemUpdate={onItemUpdate}
-                                />
-                              </AccordionContent>
-                            </AccordionItem>
-                          ))}
-                        </Accordion>
-                      </>
-                    )}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+                      ) : (
+                        <>
+                          <div className="flex justify-end mt-2 ">
+                            <div className="flex gap-1">
+                              <Button
+                                size="sm"
+                                onClick={handleOpenNewSectionItemDialog}
+                              >
+                                <Plus className="h-4 w-4" />
+                                Add Section
+                              </Button>
+                              <NewSectionItemDialog
+                                sectionId={section.id}
+                                sectionTitle={section.menuTitle}
+                                isOpen={isNewItemDialogOpen}
+                                onSuccess={handleNewSectionItemAdded}
+                                onCancel={handleCloseNewSectionItemDialog}
+                              />
+                              <Button
+                                size="sm"
+                                onClick={handleOpenReorderItemDialog}
+                                disabled={section.items.length < 2}
+                              >
+                                <ArrowUpDown className="h-4 w-4" />
+                                Reorder
+                              </Button>
+                              <ReorderSectionItemDialog
+                                isOpen={isReorderItemDialogOpen}
+                                onCancel={handleCloseReorderItemDialog}
+                                data={items}
+                              />
+                            </div>
+                          </div>
+                          <Accordion
+                            type="single"
+                            collapsible
+                            className="w-full"
+                          >
+                            {section.items
+                              .sort((a, b) => a.itemOrder - b.itemOrder)
+                              .map((item) => (
+                                <AccordionItem
+                                  className="border-0 mb-2"
+                                  key={item.id}
+                                  value={item.id}
+                                >
+                                  <AccordionTrigger className="bg-slate-100 px-2 rounded-md no-underline hover:no-underline text-slate-600">
+                                    {item.title === ""
+                                      ? "Untitled Item"
+                                      : item.title}
+                                  </AccordionTrigger>
+                                  <AccordionContent>
+                                    <GuideSectionItemUpdateForm
+                                      item={item}
+                                      onItemUpdate={onItemUpdate}
+                                    />
+                                  </AccordionContent>
+                                </AccordionItem>
+                              ))}
+                          </Accordion>
+                        </>
+                      )}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
           </Accordion>
         </div>
       </CardContent>

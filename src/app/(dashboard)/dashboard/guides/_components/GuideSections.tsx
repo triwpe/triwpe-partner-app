@@ -128,23 +128,25 @@ export function GuideSections({
             </div>
           </div>
           <Accordion type="single" collapsible className="w-full">
-            {sections.map((section) => (
-              <AccordionItem
-                className="border-0 mb-2"
-                key={section.id}
-                value={section.id}
-              >
-                <AccordionTrigger className="bg-slate-100 px-2 rounded-md no-underline hover:no-underline text-slate-600">
-                  {section.menuTitle}
-                </AccordionTrigger>
-                <AccordionContent>
-                  <GuideSectionUpdateForm
-                    section={section}
-                    onSectionUpdate={onSectionUpdate}
-                  />
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+            {sections
+              .sort((a, b) => a.sectionOrder - b.sectionOrder)
+              .map((section) => (
+                <AccordionItem
+                  className="border-0 mb-2"
+                  key={section.id}
+                  value={section.id}
+                >
+                  <AccordionTrigger className="bg-slate-100 px-2 rounded-md no-underline hover:no-underline text-slate-600">
+                    {section.menuTitle}
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <GuideSectionUpdateForm
+                      section={section}
+                      onSectionUpdate={onSectionUpdate}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
           </Accordion>
         </div>
       </CardContent>
