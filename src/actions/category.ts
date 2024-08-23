@@ -27,8 +27,7 @@ export async function updateGuideCategory(id: string, category_id: string, is_ma
   try {    
     const res = await partnerGuideApi.updateGuideCategory(id, data);
     if (!res.ok) {
-      const errorData = await res.json();
-      console.log("errorData", errorData);
+      const errorData = await res.json();  
       throw new Error(errorData.detail || "Something went wrong");
     }
 

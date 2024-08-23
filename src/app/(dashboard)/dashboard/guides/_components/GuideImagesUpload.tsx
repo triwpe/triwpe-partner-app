@@ -40,14 +40,6 @@ export function GuideImagesUpload() {
     // Select values in "files" that are not in "values"
     const filesNotInValues = files?.filter((file) => !valueSet.has(file.name));
 
-    console.log("Add this:", valuesNotInFiles);
-    console.log("Remove this:", filesNotInValues);
-
-    //add delay
-    setTimeout(() => {
-      console.log("Done");
-    }, 5000);
-
     setFiles(values);
     setIsUploading(false);
   };

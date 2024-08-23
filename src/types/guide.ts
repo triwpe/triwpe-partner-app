@@ -63,7 +63,7 @@ export interface SectionItemUpdateRequest{
   is_visible_on_demo?: boolean;
 }
 
-export interface SectionItemResponse{
+export interface SectionItemModel{
   id: string;
   guide_section_id: string;
   title?: string;

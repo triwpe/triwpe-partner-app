@@ -55,19 +55,25 @@ import { GuideSections } from "../_components/GuideSections";
 import { GuideSectionItems } from "../_components/GuideSectionItems";
 import { GuideImagesUpload } from "../_components/GuideImagesUpload";
 import { GuideImageCover } from "../_components/GuideImageCover";
-import { getGuide, updateGuide } from "@/actions/guide";
+import { fetchGuideSections, getGuide, updateGuide } from "@/actions/guide";
 import { GuideProps } from "../_types/components";
 import { useToast } from "@/components/ui/use-toast";
 import { Alert } from "@/components/ui/alert";
+import { GuideSectionModel } from "@/types/models/guide-section";
 
 interface PageParams {
   id: string;
 }
 
 export default function Page({ params }: { params: PageParams }) {
+  const router = useRouter();
   const { toast } = useToast();
-  const [guideData, setGuideData] = useState<GuideProps | null>(null);
+
   const [guideId, setGuideId] = useState(params.id);
+
+  const [guideData, setGuideData] = useState<GuideProps | null>(null);
+  const [sections, setSections] = useState<GuideSectionModel[]>([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [mainCategory, setMainCategory] = useState<string | undefined>();
   const [firstOptionalCategory, setFirstOptionalCategory] = useState<
@@ -81,14 +87,13 @@ export default function Page({ params }: { params: PageParams }) {
     string | null
   >(null);
 
-  const router = useRouter();
-
   useEffect(() => {
     if (!uuidValidate(guideId)) {
       router.replace("/dashboard/guides/new");
     }
 
     fetchGuideData();
+    fetchGuideSectionData();
 
     setIsLoading(false);
   }, [guideId]);
@@ -100,6 +105,16 @@ export default function Page({ params }: { params: PageParams }) {
     } else {
       setGuideData(response.data);
     }
+  };
+
+  const fetchGuideSectionData = async () => {
+    const { success, data, message } = await fetchGuideSections(guideId);
+    if (!success) {
+      return;
+    }
+
+    console.log("data:", data);
+    setSections(data || []);
   };
 
   const updateGuideData = (updatedData: Partial<GuideProps>) => {
@@ -167,12 +182,12 @@ export default function Page({ params }: { params: PageParams }) {
             onUpdate={updateGuideData}
           />
           <GuideSections
-            guideId={guideData?.id}
-            onSelectedSectionChange={handleSectionChange}
+            sections={sections}
+            onSectionUpdate={fetchGuideSectionData}
           />
           <GuideSectionItems
-            selectedSectionId={selectedSection}
-            guideSectionTitle={selectedSectionTitle}
+            sections={sections}
+            onItemUpdate={fetchGuideSectionData}
           />
         </div>
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">

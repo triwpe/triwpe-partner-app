@@ -79,7 +79,21 @@ export const createNewGuideSectionSchema = object({
     .max(50, "Full title must be less than 50 characters")
 });
 
+export const updateGuideSectionSchema = object({
+  menuTitle: string({ required_error: "Menu title is required" })
+    .min(1, "Menu title is required")
+    .max(20, "Menu title must be less than 20 characters"),
+  fullTitle: string({ required_error: "Full title is required" })
+    .min(1, "Full title is required")
+    .max(50, "Full title must be less than 50 characters")
+});
+
 export const createNewSectionItemSchema = object({
+  description: string({ required_error: "Description is required" })
+    .min(1, "Description is required"),
+});
+
+export const updateSectionItemSchema = object({
   description: string({ required_error: "Description is required" })
     .min(1, "Description is required"),
 });

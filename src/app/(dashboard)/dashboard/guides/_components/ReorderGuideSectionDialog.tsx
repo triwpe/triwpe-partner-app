@@ -56,7 +56,6 @@ export function ReorderGuideSectionDialog({
       setItems(updatedItems);
       setDraggingItem(null);
       setDragOverIndex(null);
-      console.log("updatedItems", updatedItems);
     }
   };
 
