@@ -83,6 +83,7 @@ export function GuideSectionUpdateForm({
 
     if (!isFormValid.success) {
       await addError(isFormValid.error);
+      setIsLoadingUpdate(false);
       return;
     }
 

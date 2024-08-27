@@ -70,6 +70,18 @@ export const updatePasswordSchema = object({
     }),
 });
 
+export const updateGuideSchema = object({
+  title: string({ required_error: "Title is required" })
+    .min(1, "Title is required")
+    .max(50, "Title must be less than 50 characters"),  
+  duration: string()
+    .regex(/^(?:[1-9][0-9]?|99)$/, "Duration must be a number between 1 and 99")
+    .optional(),
+  price: string()
+    .regex(/^\d+(\.\d{1,2})?$/, "Price must be in currency format")
+    .optional(),
+});
+
 export const createNewGuideSectionSchema = object({
   menuTitle: string({ required_error: "Menu title is required" })
     .min(1, "Menu title is required")

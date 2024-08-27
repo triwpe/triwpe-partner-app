@@ -5,6 +5,7 @@ import { GuideCategoryUpsertRequest, GuideCreateRequest, GuideSectionCreateReque
 import { auth } from "@/auth";
 import { ApiGuideSectionCreateRequest, ApiGuideSectionUpdateRequest, GuideSectionUpdateModel } from "@/types/models/guide-section";
 import { ApiSectionItemUpdateRequest } from "@/types/models/section-item";
+import { ApiGuideUpdateRequest } from "@/types/models/guides";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_TRIWPE_PARTNER_GUIDE_API_URL;
 
@@ -37,34 +38,6 @@ const createGuide = async (data: GuideCreateRequest) => {
   return response;
 };
 
-const getGuide = async (id: string) => {
-  const session = await auth();
-
-  const response = await fetch(`${API_BASE_URL}/v1/guides/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
-    },
-  });
-
-  return response;
-}
-
-const updateGuide = async (id: string, data: GuideUpdateRequest) => {
-  const session = await auth();
-
-  const response = await fetch(`${API_BASE_URL}/v1/guides/${id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
-    },
-    body: JSON.stringify(data),
-  });
-
-  return response;
-}
 
 const createGuideSection = async (id: string, data: GuideSectionCreateRequest) => {
   const session = await auth();
@@ -175,6 +148,35 @@ const deleteSectionItem = async (section_id: string, item_id: string) => {
 
 
 //NEW
+const getGuideById = async (guide_id: string): Promise<Response> => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/guides/${guide_id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+  });
+
+  return response;
+};
+
+const updateGuide = async (guide_id: string, data: ApiGuideUpdateRequest): Promise<Response> => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/guides/${guide_id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  return response;
+}
+
 const getGuideSections = async (guide_id: string): Promise<Response> => {
   const session = await auth();
 
@@ -247,6 +249,6 @@ const getGuides = async (): Promise<Response> => {
   return response;
 };
 
-export { createGuide, createMaptilerLocation, getGuide, updateGuide, getCategories, updateGuideCategory, deleteGuideCategory, getGuideSections, createGuideSection, updateGuideSection, deleteGuideSection, createSectionItem, getSectionItems, updateSectionItem, deleteSectionItem, getGuides };
+export { createGuide, createMaptilerLocation, getGuideById, updateGuide, getCategories, updateGuideCategory, deleteGuideCategory, getGuideSections, createGuideSection, updateGuideSection, deleteGuideSection, createSectionItem, getSectionItems, updateSectionItem, deleteSectionItem, getGuides };
 
 

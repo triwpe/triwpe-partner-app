@@ -55,11 +55,12 @@ import { GuideSections } from "../_components/GuideSections";
 import { GuideSectionItems } from "../_components/GuideSectionItems";
 import { GuideImagesUpload } from "../_components/GuideImagesUpload";
 import { GuideImageCover } from "../_components/GuideImageCover";
-import { fetchGuideSections, getGuide, updateGuide } from "@/actions/guide";
+import { fetchGuideSections, fetchGuide, updateGuide } from "@/actions/guide";
 import { GuideProps } from "../_types/components";
 import { useToast } from "@/components/ui/use-toast";
 import { Alert } from "@/components/ui/alert";
 import { GuideSectionModel } from "@/types/models/guide-section";
+import { GuideModel } from "@/types/models/guides";
 
 interface PageParams {
   id: string;
@@ -71,17 +72,11 @@ export default function Page({ params }: { params: PageParams }) {
 
   const [guideId, setGuideId] = useState(params.id);
 
-  const [guideData, setGuideData] = useState<GuideProps | null>(null);
+  const [guideData, setGuideData] = useState<GuideModel | null>(null);
   const [sections, setSections] = useState<GuideSectionModel[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [mainCategory, setMainCategory] = useState<string | undefined>();
-  const [firstOptionalCategory, setFirstOptionalCategory] = useState<
-    string | undefined
-  >();
-  const [secondOptionalCategory, setSecondOptionalCategory] = useState<
-    string | undefined
-  >();
+
   const [selectedSection, setSelectedSection] = useState<string | undefined>();
   const [selectedSectionTitle, setSelectedSectionTitle] = useState<
     string | null
@@ -99,11 +94,11 @@ export default function Page({ params }: { params: PageParams }) {
   }, [guideId]);
 
   const fetchGuideData = async () => {
-    const response = await getGuide(guideId);
-    if (!response.success) {
+    const { success, data, message } = await fetchGuide(guideId);
+    if (!success || !data) {
       router.replace("/dashboard/guides/new");
     } else {
-      setGuideData(response.data);
+      setGuideData(data);
     }
   };
 
@@ -113,45 +108,7 @@ export default function Page({ params }: { params: PageParams }) {
       return;
     }
 
-    console.log("data:", data);
     setSections(data || []);
-  };
-
-  const updateGuideData = (updatedData: Partial<GuideProps>) => {
-    setGuideData((prev) => ({ ...prev, ...updatedData } as GuideProps));
-  };
-
-  const handleSaveGuide = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    const response = await updateGuide(
-      guideId,
-      guideData?.title,
-      guideData?.description,
-      guideData?.duration,
-      guideData?.price,
-      guideData?.language,
-      guideData?.status
-    );
-
-    if (!response.success) {
-      console.error("Failed to save guide");
-      return;
-    }
-
-    toast({
-      variant: "success",
-      description: "Guide saved successfully",
-    });
-  };
-
-  const handleSectionChange = (
-    value: string | undefined,
-    title?: string | null
-  ) => {
-    setSelectedSection(value);
-    if (title) {
-      setSelectedSectionTitle(title);
-    }
   };
 
   if (isLoading || !guideData) {
@@ -160,27 +117,9 @@ export default function Page({ params }: { params: PageParams }) {
 
   return (
     <div className="mx-auto grid flex-1 auto-rows-max gap-4 overflow-hidden">
-      <div className="flex items-end gap-4">
-        <div className="items-end gap-2 ml-auto flex">
-          <Button variant="outline" size="sm">
-            Discard
-          </Button>
-          <Button size="sm" onClick={handleSaveGuide}>
-            Save Guide
-          </Button>
-        </div>
-      </div>
       <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
         <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
-          <GuideDetailsForm
-            title={guideData?.title ?? ""}
-            location={guideData?.location?.place_name ?? ""}
-            language={guideData?.language ?? undefined}
-            duration={guideData?.duration ?? null}
-            price={guideData?.price ?? null}
-            description={guideData?.description ?? null}
-            onUpdate={updateGuideData}
-          />
+          <GuideDetailsForm guide={guideData} />
           <GuideSections
             sections={sections}
             onSectionUpdate={fetchGuideSectionData}
@@ -193,19 +132,19 @@ export default function Page({ params }: { params: PageParams }) {
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
           <GuideStatusForm
             status={guideData.status}
-            onUpdate={updateGuideData}
+            onUpdate={() => fetchGuideData()}
           />
           <GuideCategoriesForm
             guideId={guideData?.id}
             mainCategory={
-              guideData?.categories?.find((category) => category.is_main)?.id
+              guideData?.categories?.find((category) => category.isMain)?.id
             }
             firstOptionalCategory={
-              guideData?.categories?.filter((category) => !category.is_main)[0]
+              guideData?.categories?.filter((category) => !category.isMain)[0]
                 ?.id
             }
             secondOptionalCategory={
-              guideData?.categories?.filter((category) => !category.is_main)[1]
+              guideData?.categories?.filter((category) => !category.isMain)[1]
                 ?.id
             }
           />

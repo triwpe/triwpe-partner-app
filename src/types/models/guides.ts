@@ -17,6 +17,15 @@ export interface GuideModel {
   updatedAt?: Date;
 }
 
+export interface GuideUpdateModel{
+  title?: string;
+  description?: string;
+  duration?: number;
+  price?: number;
+  language?: string;
+  status?: string;
+}
+
 export interface ApiGuideResponse {
   id: string;
   title: string;
@@ -30,4 +39,13 @@ export interface ApiGuideResponse {
   author_id: string;
   created_at: Date;
   updated_at?: Date;
+}
+
+export interface ApiGuideUpdateRequest {
+  title?: string;
+  description?: string;
+  duration?: number;
+  price?: number;
+  language?: string;
+  status?: string;
 }

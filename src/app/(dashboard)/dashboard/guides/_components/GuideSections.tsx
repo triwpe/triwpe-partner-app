@@ -31,7 +31,6 @@ export function GuideSections({
   sections,
   onSectionUpdate,
 }: GuideSectionsProps) {
-  console.log(sections);
   const guideId: string | undefined =
     sections.length > 0 ? sections[0].guideId : undefined;
 

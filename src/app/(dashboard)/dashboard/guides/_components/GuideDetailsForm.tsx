@@ -19,49 +19,89 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { GuideProps } from "../_types/components";
 import { set } from "zod";
+import { GuideModel, GuideUpdateModel } from "@/types/models/guides";
+import { Button } from "@/components/ui/button";
+import { updateGuideSchema, updateGuideSectionSchema } from "@/lib/zod";
+import { updateGuide } from "@/actions/guide";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
 
 interface GuideDetailsFormProps {
-  title: string;
-  location: string;
-  duration: number | null;
-  price: number | null;
-  language: string | undefined;
-  description: string | null;
-  onUpdate: (updatedData: Partial<GuideProps>) => void;
+  guide: GuideModel;
 }
 
-export function GuideDetailsForm({
-  title,
-  location,
-  duration,
-  price,
-  language,
-  description,
-  onUpdate,
-}: GuideDetailsFormProps) {
-  const [selectedOption, setSelectedOption] = useState(language);
+export function GuideDetailsForm({ guide }: GuideDetailsFormProps) {
+  const { toast } = useToast();
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUpdate({ title: e.target.value });
-  };
+  const [title, setTitle] = useState<string>(guide.title);
+  const location: string = guide.location.placeName;
+  const [duration, setDuration] = useState<string>(
+    guide.duration?.toString() || ""
+  );
+  const [price, setPrice] = useState<string>(guide.price?.toString() || "");
+  const [language, setLanguage] = useState<string | undefined>(
+    guide.language || undefined
+  );
+  const [description, setDescription] = useState<string>(
+    guide.description || ""
+  );
 
-  const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUpdate({ duration: parseInt(e.target.value) });
-  };
+  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
 
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUpdate({ price: parseFloat(e.target.value) });
-  };
+  const [formErrors, setFormErrors] = useState<any[]>([]);
 
-  const handleLanguageChange = (value: string) => {
-    setSelectedOption(value);
-    onUpdate({ language: value });
-  };
-
-  const handleDescriptionChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
+  const handleUpdateGuide = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    onUpdate({ description: e.target.value });
+    e.preventDefault();
+
+    setIsLoadingUpdate(true);
+    setFormErrors([]);
+
+    const isFormValid = updateGuideSchema.safeParse({
+      title: title,
+      duration: duration,
+      price: price,
+    });
+
+    if (!isFormValid.success) {
+      await addError(isFormValid.error);
+      setIsLoadingUpdate(false);
+      return;
+    }
+
+    const updated_data: GuideUpdateModel = {
+      title: title,
+      duration: parseInt(duration),
+      price: parseInt(price),
+      language: language,
+      description: description,
+    };    
+
+    const updateResponse = await updateGuide(guide.id, updated_data);
+
+    if (updateResponse.success) {
+      toast({
+        variant: "success",
+        description: "Guide updated successfully",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        description: "Failed to update guide",
+      });
+    }
+
+    setIsLoadingUpdate(false);
+  };
+
+  const addError = async (error: any) => {
+    let errArr: any[] = [];
+    const { errors: err } = error;
+    for (var i = 0; i < err.length; i++) {
+      errArr.push({ for: err[i].path[0], message: err[i].message });
+    }
+    setFormErrors(errArr);
   };
 
   return (
@@ -74,13 +114,18 @@ export function GuideDetailsForm({
         <div className="grid gap-6">
           <div className="grid gap-3">
             <Label htmlFor="name">Title</Label>
-            <Input
-              id="name"
-              type="text"
-              className="w-full"
-              value={title}
-              onChange={handleTitleChange}
-            />
+            <div>
+              <Input
+                id="name"
+                type="text"
+                className="w-full"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              <div className="mt-1 ml-1 text-xs text-red-600">
+                {formErrors.find((error) => error.for === "title")?.message}
+              </div>
+            </div>
           </div>
           <div className="grid gap-3">
             <Label htmlFor="name">Location</Label>
@@ -94,32 +139,42 @@ export function GuideDetailsForm({
           </div>
           <div className="grid gap-3">
             <Label htmlFor="name">Duration (days)</Label>
-            <Input
-              id="name"
-              type="text"
-              className="w-1/3"
-              placeholder="Duration"
-              value={duration?.toString()}
-              onChange={handleDurationChange}
-            />
+            <div>
+              <Input
+                id="name"
+                type="text"
+                className="w-1/3"
+                placeholder="Duration"
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+              />
+              <div className="mt-1 ml-1 text-xs text-red-600">
+                {formErrors.find((error) => error.for === "duration")?.message}
+              </div>
+            </div>
           </div>
           <div className="grid gap-3">
             <Label htmlFor="name">Price</Label>
-            <Input
-              id="name"
-              type="text"
-              className="w-1/3"
-              placeholder="Price"
-              value={price?.toString()}
-              onChange={handlePriceChange}
-            />
+            <div>
+              <Input
+                id="name"
+                type="text"
+                className="w-1/3"
+                placeholder="Price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+              <div className="mt-1 ml-1 text-xs text-red-600">
+                {formErrors.find((error) => error.for === "price")?.message}
+              </div>
+            </div>
           </div>
           <div className="grid gap-3">
             <Label htmlFor="name">Language</Label>
             <Select
-              value={selectedOption}
+              value={language}
               onValueChange={(value) => {
-                handleLanguageChange(value);
+                setLanguage(value);
               }}
             >
               <SelectTrigger
@@ -148,9 +203,24 @@ export function GuideDetailsForm({
               id="description"
               placeholder="Write a description for your guide"
               className="min-h-32"
-              value={description?.toString()}
-              onChange={handleDescriptionChange}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
+          </div>
+          <div className="flex mt-4 justify-end">
+            <Button
+              size="default"
+              onClick={handleUpdateGuide}
+              disabled={isLoadingUpdate}
+            >
+              {isLoadingUpdate ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...
+                </>
+              ) : (
+                "Update Section"
+              )}
+            </Button>
           </div>
         </div>
       </CardContent>

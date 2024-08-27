@@ -4,7 +4,7 @@ import { GuideCreateRequest, GuideResponse, GuideSectionCreateRequest, GuideSect
 import * as partnerGuideApi from "@/services/api/partnerGuideApi";
 import { ApiGuideSectionResponse, ApiGuideSectionUpdateRequest, GuideSectionModel, GuideSectionUpdateModel } from "@/types/models/guide-section";
 import { ApiSectionItemUpdateRequest, SectionItemUpdateModel } from "@/types/models/section-item";
-import { ApiGuideResponse, GuideModel } from "@/types/models/guides";
+import { ApiGuideResponse, ApiGuideUpdateRequest, GuideModel, GuideUpdateModel } from "@/types/models/guides";
 import { ApiMaptilerLocationResponse, MaptilerLocationModel } from "@/types/models/maptiler-location";
 import { ApiGuideCategoryResponse, GuideCategoryModel } from "@/types/models/guide-category";
 
@@ -22,20 +22,6 @@ export async function createGuide(title: string, location_id: string) {
 
   try {
     const response = await partnerGuideApi.createGuide(data);
-    if (!response.ok) {
-      const errorData = await response.json();
-      return { success: false, message: errorData.detail || "Something went wrong" };
-    }
-
-    return { success: true, data: await response.json() };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
-}
-
-export async function getGuide(id: string) {
-  try {
-    const response = await partnerGuideApi.getGuide(id);
     if (!response.ok) {
       const errorData = await response.json();
       return { success: false, message: errorData.detail || "Something went wrong" };
@@ -69,32 +55,6 @@ export async function createGuideSection(id: string, menu_title: string, full_ti
     return { success: false, message: error.message };
   }
 }
-
-export async function updateGuide(id: string, title?: string, description?: string, duration?: number, price?: number, language?: string, status?: string) {
-  const data: GuideUpdateRequest = {
-    title: title,
-    description: description,
-    duration: duration,
-    price: price,
-    language: language,
-    status: status,
-  }
-   
-  try {
-    const response = await partnerGuideApi.updateGuide(id, data);
-    if (!response.ok) {
-      const errorData = await response.json();
-      return { success: false, message: errorData.detail || "Something went wrong" };
-    }
-
-    return { success: true };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
-}
-
-
-
 
 
 
@@ -136,6 +96,22 @@ export async function deleteSectionItem(guide_section_id: string, item_id: strin
 }
 //SECTION ITEM END
 
+export async function fetchGuide(id: string): Promise<ActionResponse<GuideModel>> {
+  try {
+    const response = await partnerGuideApi.getGuideById(id);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.detail || "Something went wrong" };
+    }
+    
+    const data: ApiGuideResponse = await response.json();   
+    return { success: true, data: mapApiGuideResponseToModel(data) };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
 export async function fetchGuides(): Promise<ActionResponse<GuideModel[]>> {
   try {
     const response = await partnerGuideApi.getGuides();
@@ -147,6 +123,23 @@ export async function fetchGuides(): Promise<ActionResponse<GuideModel[]>> {
     
     const data: ApiGuideResponse[] = await response.json();   
     return { success: true, data: data.map(mapApiGuideResponseToModel) };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
+export async function updateGuide(guide_id: string, updated_data: GuideUpdateModel): Promise<ActionResponse<void>> {
+  try {
+    const data: ApiGuideUpdateRequest = mapGuideUpdateModelToApiRequest(updated_data);
+
+    const response = await partnerGuideApi.updateGuide(guide_id, data);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.detail || "Something went wrong" };
+    }
+
+    return { success: true };
   } catch (error: any) {
     return { success: false, message: error.message };
   }
@@ -252,10 +245,10 @@ const mapApiMaptilerLocationResponseToModel = (data: ApiMaptilerLocationResponse
   return {
     id: data.id,
     placeName: data.place_name,
-    CountryCode: data.country_code,
-    Latitude: data.latitude,
-    Longitude: data.longitude,
-    PlaceType: data.place_type,
+    countryCode: data.country_code,
+    latitude: data.latitude,
+    longitude: data.longitude,
+    placeType: data.place_type,
   };
 }
 
@@ -270,7 +263,15 @@ const mapApiGuideCategoryResponseToModel = (data: ApiGuideCategoryResponse): Gui
   };
 }
     
-    
+const mapGuideUpdateModelToApiRequest = (data: GuideUpdateModel): ApiGuideUpdateRequest => {
+  return {
+    title: data.title,
+    description: data.description,
+    duration: data.duration,
+    price: data.price,
+    language: data.language,
+  };
+}    
 
 const mapApiGuideSectionResponseToModel = (data: ApiGuideSectionResponse): GuideSectionModel => {
   return {

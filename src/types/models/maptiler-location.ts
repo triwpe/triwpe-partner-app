@@ -1,10 +1,10 @@
 export interface MaptilerLocationModel {
   id: string;
   placeName: string;
-  CountryCode: string;
-  Latitude: number;
-  Longitude: number;
-  PlaceType: string;
+  countryCode: string;
+  latitude: number;
+  longitude: number;
+  placeType: string;
 }
 
 export interface ApiMaptilerLocationResponse {
