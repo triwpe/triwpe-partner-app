@@ -1,62 +1,127 @@
-import { useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { NewGuideDialogTitleStep } from "./NewGuideDialogTitleStep";
-import { NewGuideDialogLocationStep } from "./NewGuideDialogLocationStep";
-import { useRouter } from "next/navigation";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { GripIcon } from "lucide-react";
+} from '@/components/ui/card';
+import { NewGuideDialogTitleStep } from './NewGuideDialogTitleStep';
+import { NewGuideDialogLocationStep } from './NewGuideDialogLocationStep';
+import { useRouter } from 'next/navigation';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Grip, GripIcon } from 'lucide-react';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  type DropResult,
+} from '@hello-pangea/dnd';
+import {
+  GuideSectionModel,
+  GuideSectionReorderModel,
+} from '@/types/models/guide-section';
+import { reorderGuideSection } from '@/actions/guide';
+import { useToast } from '@/components/ui/use-toast';
 
 interface ReorderGuideSectionDialogProps {
   isOpen: boolean;
-  sections: any[];
-  onCancel: () => void;
+  data: GuideSectionModel[];
+  onClose: (refresh: boolean) => void;
 }
 
 export function ReorderGuideSectionDialog({
   isOpen,
-  sections,
-  onCancel,
+  data,
+  onClose,
 }: ReorderGuideSectionDialogProps) {
-  const [items, setItems] = useState(sections);
+  const { toast } = useToast();
 
-  const [draggingItem, setDraggingItem] = useState(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-  const handleDragStart = (item: any) => {
-    setDraggingItem(item);
-  };
-  const handleDragOver = (e: React.DragEvent<HTMLLIElement>, index: number) => {
-    e.preventDefault();
-    setDragOverIndex(index);
-  };
+  const guideId: string = data.length > 0 ? data[0].guideId : '';
+  const [reorderedSections, setReorderedSections] = useState<
+    GuideSectionModel[]
+  >([]);
 
-  const handleDrop = async (e: React.DragEvent<HTMLLIElement>) => {
-    e.preventDefault();
-    if (draggingItem && dragOverIndex !== null) {
-      const updatedItems = [...items];
-      updatedItems.splice(items.indexOf(draggingItem), 1);
-      updatedItems.splice(dragOverIndex, 0, draggingItem);
-      setItems(updatedItems);
-      setDraggingItem(null);
-      setDragOverIndex(null);
+  useEffect(() => {
+    if (isOpen) {
+      setReorderedSections(data);
     }
+  }, [isOpen]);
+
+  const onDragEnd = async (result: DropResult) => {
+    if (!result.destination) return;
+
+    const sections = JSON.parse(JSON.stringify(reorderedSections));
+    const [reorderedSection] = sections.splice(result.source.index, 1);
+    sections.splice(result.destination.index, 0, reorderedSection);
+
+    sections.forEach((item: GuideSectionModel, index: number) => {
+      item.sectionOrder = index + 1;
+    });
+
+    setReorderedSections(sections);
+  };
+
+  const handleClose = async () => {
+    const hasOrderChanged: boolean = await hasSectionOrderChanged(
+      data,
+      reorderedSections,
+    );
+    if (hasOrderChanged) {
+      const reorderedData: GuideSectionReorderModel[] = reorderedSections.map(
+        (section) => ({
+          id: section.id,
+          sectionOrder: section.sectionOrder,
+        }),
+      );
+
+      const reorderResponse = await reorderGuideSection(guideId, reorderedData);
+
+      if (reorderResponse.success) {
+        toast({
+          variant: 'success',
+          description: 'Sections reordered successfully',
+        });
+      } else {
+        toast({
+          variant: 'destructive',
+          description: 'Failed to reorder sections',
+        });
+      }
+    }
+    onClose(hasOrderChanged);
+  };
+
+  const hasSectionOrderChanged = async (
+    data: GuideSectionModel[],
+    reorderedData: GuideSectionModel[],
+  ) => {
+    for (let i = 0; i < data.length; i++) {
+      const originalSection = data[i];
+      const reorderedSection = reorderedData.find(
+        (section) => section.id === originalSection.id,
+      );
+
+      if (
+        reorderedSection &&
+        originalSection.sectionOrder !== reorderedSection.sectionOrder
+      ) {
+        return true;
+      }
+    }
+    return false;
   };
 
   return (
@@ -70,40 +135,54 @@ export function ReorderGuideSectionDialog({
             <Card className="border-0 shadow-none">
               <CardHeader>
                 <CardTitle className="text-2xl">
-                  Drag & drop to reorder sections
+                  Drag & drop to reorder data
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div>
-                  <ul className="space-y-2">
-                    {items.map((item, index) => (
-                      <li
-                        key={item.guide_section_id}
-                        className={`flex items-center bg-slate-100 p-3 rounded-md cursor-move transition-all ${
-                          draggingItem === item
-                            ? "opacity-50 translate-y-2"
-                            : dragOverIndex === index
-                            ? "bg-orange-100"
-                            : ""
-                        }`}
-                        draggable
-                        onDragStart={() => handleDragStart(item)}
-                        onDragOver={(e) => handleDragOver(e, index)}
-                        onDrop={handleDrop}
+                <DragDropContext onDragEnd={onDragEnd}>
+                  <Droppable droppableId="data">
+                    {(provided) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className="space-y-2"
                       >
-                        <div className="flex-1 font-medium">
-                          {item.menu_title}
-                        </div>
-                        <div className="text-muted-foreground cursor-grab">
-                          <GripIcon className="w-5 h-5" />
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                        {reorderedSections.map((section, index) => (
+                          <Draggable
+                            key={section.id}
+                            draggableId={section.id}
+                            index={index}
+                          >
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`flex sections-center bg-slate-100 p-3 rounded-md cursor-move transition-all`}
+                                style={{
+                                  ...provided.draggableProps.style,
+                                  left: 'auto !important',
+                                  top: 'auto !important',
+                                }}
+                              >
+                                <div className="flex-1 font-medium">
+                                  {section.menuTitle}
+                                </div>
+                                <div className="text-muted-foreground cursor-grab">
+                                  <Grip className="w-5 h-5" />
+                                </div>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
               </CardContent>
               <CardFooter className="gap-2 justify-end">
-                <Button className="gap-2" onClick={onCancel}>
+                <Button className="gap-2" onClick={handleClose}>
                   Close
                 </Button>
               </CardFooter>

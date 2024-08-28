@@ -29,6 +29,11 @@ export interface SectionItemUpdateModel {
   isVisibleOnDemo?: boolean;
 }
 
+export interface SectionItemReorderModel {
+  id: string;
+  itemOrder: number;
+}
+
 export interface ApiSectionItemResponse {
     id: string;
     guide_section_id: string;
@@ -60,3 +65,7 @@ export interface ApiSectionItemUpdateRequest {
     is_visible_on_demo?: boolean;
 }
 
+export interface ApiSectionItemReorderRequest{
+  id: string;
+  item_order: number;
+}

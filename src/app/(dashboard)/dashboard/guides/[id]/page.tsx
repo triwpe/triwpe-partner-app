@@ -130,10 +130,7 @@ export default function Page({ params }: { params: PageParams }) {
           />
         </div>
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-          <GuideStatusForm
-            status={guideData.status}
-            onUpdate={() => fetchGuideData()}
-          />
+          <GuideStatusForm status={guideData.status} />
           <GuideCategoriesForm
             guideId={guideData?.id}
             mainCategory={

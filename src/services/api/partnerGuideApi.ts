@@ -3,8 +3,8 @@
 import { MaptilerLocationCreateRequest } from "@/types/location";
 import { GuideCategoryUpsertRequest, GuideCreateRequest, GuideSectionCreateRequest, GuideSectionUpdateRequest, GuideUpdateRequest, SectionItemCreateRequest, SectionItemUpdateRequest } from "@/types/guide";
 import { auth } from "@/auth";
-import { ApiGuideSectionCreateRequest, ApiGuideSectionUpdateRequest, GuideSectionUpdateModel } from "@/types/models/guide-section";
-import { ApiSectionItemUpdateRequest } from "@/types/models/section-item";
+import { ApiGuideSectionCreateRequest, ApiGuideSectionReorderRequest, ApiGuideSectionUpdateRequest, GuideSectionUpdateModel } from "@/types/models/guide-section";
+import { ApiSectionItemReorderRequest, ApiSectionItemUpdateRequest } from "@/types/models/section-item";
 import { ApiGuideUpdateRequest } from "@/types/models/guides";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_TRIWPE_PARTNER_GUIDE_API_URL;
@@ -220,6 +220,21 @@ const deleteGuideSection = async (guide_id: string, section_id: string): Promise
   return response;
 }
 
+const reorderGuideSection = async (guide_id: string, data: ApiGuideSectionReorderRequest[]): Promise<Response> => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/guides/${guide_id}/sections/reorder`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  return response;
+}
+
 const updateSectionItem = async (section_id: string, item_id: string, data: ApiSectionItemUpdateRequest): Promise<Response> => {
   const session = await auth();
 
@@ -249,6 +264,33 @@ const getGuides = async (): Promise<Response> => {
   return response;
 };
 
-export { createGuide, createMaptilerLocation, getGuideById, updateGuide, getCategories, updateGuideCategory, deleteGuideCategory, getGuideSections, createGuideSection, updateGuideSection, deleteGuideSection, createSectionItem, getSectionItems, updateSectionItem, deleteSectionItem, getGuides };
+const reorderSectionItem = async (section_id: string, data: ApiSectionItemReorderRequest[]): Promise<Response> => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/guides/sections/${section_id}/items/reorder`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  return response;
+}
+
+export { 
+  createGuide, 
+  createMaptilerLocation, 
+  getGuideById, 
+  updateGuide, 
+  getCategories, 
+  updateGuideCategory, 
+  deleteGuideCategory, 
+  getGuideSections, 
+  createGuideSection, 
+  updateGuideSection, 
+  deleteGuideSection, 
+  createSectionItem, getSectionItems, updateSectionItem, deleteSectionItem, getGuides, reorderGuideSection, reorderSectionItem };
 
 

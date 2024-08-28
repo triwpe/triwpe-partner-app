@@ -10,12 +10,11 @@ import { GuideProps } from "../_types/components";
 
 interface GuideStatusFormProps {
   status: string;
-  onUpdate: (updatedData: Partial<GuideProps>) => void;
 }
 
-export function GuideStatusForm({ status, onUpdate }: GuideStatusFormProps) {
+export function GuideStatusForm({ status }: GuideStatusFormProps) {
   const handleStatusChange = (value: string) => {
-    onUpdate({ status: value });
+    console.log(value);
   };
 
   return (

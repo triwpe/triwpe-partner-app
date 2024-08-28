@@ -2,8 +2,8 @@
 
 import { GuideCreateRequest, GuideResponse, GuideSectionCreateRequest, GuideSectionUpdateRequest, GuideUpdateRequest, SectionItemCreateRequest, SectionItemUpdateRequest } from "@/types/guide";
 import * as partnerGuideApi from "@/services/api/partnerGuideApi";
-import { ApiGuideSectionResponse, ApiGuideSectionUpdateRequest, GuideSectionModel, GuideSectionUpdateModel } from "@/types/models/guide-section";
-import { ApiSectionItemUpdateRequest, SectionItemUpdateModel } from "@/types/models/section-item";
+import { ApiGuideSectionReorderRequest, ApiGuideSectionResponse, ApiGuideSectionUpdateRequest, GuideSectionModel, GuideSectionReorderModel, GuideSectionUpdateModel } from "@/types/models/guide-section";
+import { ApiSectionItemReorderRequest, ApiSectionItemUpdateRequest, SectionItemReorderModel, SectionItemUpdateModel } from "@/types/models/section-item";
 import { ApiGuideResponse, ApiGuideUpdateRequest, GuideModel, GuideUpdateModel } from "@/types/models/guides";
 import { ApiMaptilerLocationResponse, MaptilerLocationModel } from "@/types/models/maptiler-location";
 import { ApiGuideCategoryResponse, GuideCategoryModel } from "@/types/models/guide-category";
@@ -193,6 +193,22 @@ export async function deleteGuideSection(guide_id: string, section_id: string): 
   }
 }
 
+export async function reorderGuideSection(guide_id: string, reordered_data: GuideSectionReorderModel[] ): Promise<ActionResponse<void>> {
+  try {
+    const data: ApiGuideSectionReorderRequest[] = reordered_data.map(mapGuideSectionReorderModelToApiRequest);
+    const response = await partnerGuideApi.reorderGuideSection(guide_id, data);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.detail || "Something went wrong" };
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
 export async function getSectionItems(guide_section_id: string) {
   try {
     const response = await partnerGuideApi.getSectionItems(guide_section_id);
@@ -212,6 +228,22 @@ export async function updateSectionItem(section_id: string, item_id: string, upd
     const data: ApiSectionItemUpdateRequest = mapSectionItemUpdateModelToApiRequest(updated_data);
 
     const response = await partnerGuideApi.updateSectionItem(section_id, item_id, data);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.detail || "Something went wrong" };
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
+export async function reorderSectionItem(section_id: string, reordered_data: SectionItemReorderModel[]): Promise<ActionResponse<void>> {
+  try {
+    const data: ApiSectionItemReorderRequest[] = reordered_data.map(mapSectionItemReorderModelToApiRequest);
+    const response = await partnerGuideApi.reorderSectionItem(section_id, data);
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -306,10 +338,24 @@ const mapGuideSectionUpdateModelToApiRequest = (data: GuideSectionUpdateModel): 
   };
 }
 
+const mapGuideSectionReorderModelToApiRequest = (data: GuideSectionReorderModel): ApiGuideSectionReorderRequest => {
+  return {
+    id: data.id,
+    section_order: data.sectionOrder,
+  };
+}
+
 const mapSectionItemUpdateModelToApiRequest = (data: SectionItemUpdateModel): ApiSectionItemUpdateRequest => {
   return {
     title: data.title,
     description: data.description,
     is_visible_on_demo: data.isVisibleOnDemo,
+  };
+}
+
+const mapSectionItemReorderModelToApiRequest = (data: SectionItemReorderModel): ApiSectionItemReorderRequest => {
+  return {
+    id: data.id,
+    item_order: data.itemOrder,
   };
 }

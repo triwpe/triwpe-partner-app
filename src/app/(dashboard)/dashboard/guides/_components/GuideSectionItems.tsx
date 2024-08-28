@@ -1,28 +1,28 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from '@/components/ui/accordion';
 import {
   FileUploader,
   FileUploaderContent,
   FileUploaderItem,
   FileInput,
-} from "@/components/extension/file-upload";
+} from '@/components/extension/file-upload';
 
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import {
   ArrowUpDown,
   Eye,
@@ -31,22 +31,22 @@ import {
   Pencil,
   Plus,
   Upload,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { NewSectionItemDialog } from "./NewSectionItemDialog";
-import { ReorderSectionItemDialog } from "./ReorderSectionItemDialog";
-import { DropzoneOptions } from "react-dropzone";
-import Image from "next/image";
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { NewSectionItemDialog } from './NewSectionItemDialog';
+import { ReorderSectionItemDialog } from './ReorderSectionItemDialog';
+import { DropzoneOptions } from 'react-dropzone';
+import Image from 'next/image';
 import {
   deleteSectionItem,
   getSectionItems,
   updateSectionItem,
-} from "@/actions/guide";
-import { useToast } from "@/components/ui/use-toast";
-import { Alert } from "@/components/Alert";
-import { createNewSectionItemSchema } from "@/lib/zod";
-import { GuideSectionModel } from "@/types/models/guide-section";
-import { GuideSectionItemUpdateForm } from "./GuideSectionItemUpdateForm";
+} from '@/actions/guide';
+import { useToast } from '@/components/ui/use-toast';
+import { Alert } from '@/components/Alert';
+import { createNewSectionItemSchema } from '@/lib/zod';
+import { GuideSectionModel } from '@/types/models/guide-section';
+import { GuideSectionItemUpdateForm } from './GuideSectionItemUpdateForm';
 
 interface GuideSectionItemProps {
   sections: GuideSectionModel[];
@@ -63,13 +63,13 @@ export function GuideSectionItems({
   const [isNewItemDialogOpen, setIsNewItemDialogOpen] = useState(false);
   const [isReorderItemDialogOpen, setIsReorderItemDialogOpen] = useState(false);
 
-  const [selectedItem, setSelectedItem] = useState<string | undefined>("");
+  const [selectedItem, setSelectedItem] = useState<string | undefined>('');
 
   const [selectedSection, setSelectedSection] = useState<string | undefined>(
-    undefined
+    undefined,
   );
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [isVisibleOnDemo, setIsVisibleOnDemo] = useState<boolean>(false);
 
   const [items, setItems] = useState<any[]>([]);
@@ -80,7 +80,7 @@ export function GuideSectionItems({
 
   const dropzone = {
     accept: {
-      "image/*": [".jpg", ".jpeg", ".png"],
+      'image/*': ['.jpg', '.jpeg', '.png'],
     },
     multiple: true,
     maxFiles: 5,
@@ -99,15 +99,18 @@ export function GuideSectionItems({
     setIsReorderItemDialogOpen(true);
   };
 
-  const handleCloseReorderItemDialog = () => {
+  const handleCloseReorderItemDialog = (refresh: boolean) => {
+    if (refresh) {
+      onItemUpdate();
+    }
     setIsReorderItemDialogOpen(false);
   };
 
   const handleNewSectionItemAdded = () => {
     setIsNewItemDialogOpen(false);
     toast({
-      variant: "success",
-      description: "Item added successfully",
+      variant: 'success',
+      description: 'Item added successfully',
     });
     onItemUpdate();
   };
@@ -158,9 +161,9 @@ export function GuideSectionItems({
                       {section.items.length === 0 ? (
                         <div className="flex flex-col items-center justify-center mt-16">
                           <p className="text-gray-500">
-                            The{" "}
+                            The{' '}
                             <span className="font-bold">
-                              &ldquo;{section.menuTitle}&rdquo;{" "}
+                              &ldquo;{section.menuTitle}&rdquo;{' '}
                             </span>
                             section is empty. Add your first item to get
                             started! 🎯
@@ -208,8 +211,8 @@ export function GuideSectionItems({
                               </Button>
                               <ReorderSectionItemDialog
                                 isOpen={isReorderItemDialogOpen}
-                                onCancel={handleCloseReorderItemDialog}
-                                data={items}
+                                data={section.items}
+                                onClose={handleCloseReorderItemDialog}
                               />
                             </div>
                           </div>
@@ -227,8 +230,8 @@ export function GuideSectionItems({
                                   value={item.id}
                                 >
                                   <AccordionTrigger className="bg-slate-100 px-2 rounded-md no-underline hover:no-underline text-slate-600">
-                                    {item.title === ""
-                                      ? "Untitled Item"
+                                    {item.title === ''
+                                      ? 'Untitled Item'
                                       : item.title}
                                   </AccordionTrigger>
                                   <AccordionContent>

@@ -1,26 +1,26 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 
-import { ArrowUpDown, Plus } from "lucide-react";
-import { useState } from "react";
-import { NewGuideSectionDialog } from "./NewGuideSectionDialog";
-import { ReorderGuideSectionDialog } from "./ReorderGuideSectionDialog";
+import { ArrowUpDown, Plus } from 'lucide-react';
+import { useState } from 'react';
+import { NewGuideSectionDialog } from './NewGuideSectionDialog';
+import { ReorderGuideSectionDialog } from './ReorderGuideSectionDialog';
 
-import { useToast } from "@/components/ui/use-toast";
-import { GuideSectionModel } from "@/types/models/guide-section";
+import { useToast } from '@/components/ui/use-toast';
+import { GuideSectionModel } from '@/types/models/guide-section';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { GuideSectionUpdateForm } from "./GuideSectionUpdateForm";
+} from '@/components/ui/accordion';
+import { GuideSectionUpdateForm } from './GuideSectionUpdateForm';
 
 interface GuideSectionsProps {
   sections: GuideSectionModel[];
@@ -43,8 +43,8 @@ export function GuideSections({
   const handleNewGuideSectionAdded = async () => {
     setIsNewSectionDialogOpen(false);
     toast({
-      variant: "success",
-      description: "Section added successfully",
+      variant: 'success',
+      description: 'Section added successfully',
     });
     onSectionUpdate();
   };
@@ -61,7 +61,10 @@ export function GuideSections({
     setIsReorderSectionDialogOpen(true);
   };
 
-  const handleCloseReorderSectionDialog = async () => {
+  const handleCloseReorderSectionDialog = async (refreshSection: boolean) => {
+    if (refreshSection) {
+      onSectionUpdate();
+    }
     setIsReorderSectionDialogOpen(false);
   };
 
@@ -83,7 +86,7 @@ export function GuideSections({
             </Button>
             <NewGuideSectionDialog
               isOpen={isNewSectionDialogOpen}
-              guideId={guideId ? guideId : ""}
+              guideId={guideId ? guideId : ''}
               onSuccess={handleNewGuideSectionAdded}
               onCancel={handleCloseNewGuideSectionDialog}
             />
@@ -109,7 +112,7 @@ export function GuideSections({
               </Button>
               <NewGuideSectionDialog
                 isOpen={isNewSectionDialogOpen}
-                guideId={guideId ? guideId : ""}
+                guideId={guideId ? guideId : ''}
                 onSuccess={handleNewGuideSectionAdded}
                 onCancel={handleCloseNewGuideSectionDialog}
               />
@@ -123,8 +126,8 @@ export function GuideSections({
               </Button>
               <ReorderGuideSectionDialog
                 isOpen={isReorderSectionDialogOpen}
-                sections={sections}
-                onCancel={handleCloseReorderSectionDialog}
+                data={sections}
+                onClose={handleCloseReorderSectionDialog}
               />
             </div>
           </div>

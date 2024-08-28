@@ -36,6 +36,11 @@ export interface GuideSectionUpdateModel {
   isVisibleOnDemo?: boolean;
 }
 
+export interface GuideSectionReorderModel {
+  id: string;
+  sectionOrder: number;
+}
+
 export interface ApiGuideSectionResponse {
   id: string;
   guide_id: string;
@@ -63,6 +68,11 @@ export interface ApiGuideSectionCreateResponse {
   description?: string;
   is_visible_on_demo: boolean; 
   created_at: Date;
+}
+
+export interface ApiGuideSectionReorderRequest{
+  id: string;
+  section_order: number;
 }
 
 export interface ApiGuideSectionUpdateRequest {
