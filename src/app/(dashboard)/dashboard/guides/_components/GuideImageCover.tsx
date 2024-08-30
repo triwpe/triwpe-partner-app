@@ -1,46 +1,117 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  FileUploader,
-  FileUploaderContent,
-  FileUploaderItem,
-  FileInput,
-} from "@/components/extension/file-upload";
-import { Paperclip, Upload } from "lucide-react";
-import { useState } from "react";
-import { DropzoneOptions } from "react-dropzone";
-import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CldImage } from 'next-cloudinary';
 
-export function GuideImageCover() {
-  const [files, setFiles] = useState<File[] | null>(null);
+import { Loader2, Paperclip, Trash2, Upload } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import Dropzone, { FileRejection, useDropzone } from 'react-dropzone';
+import Image from 'next/image';
+import { useToast } from '@/components/ui/use-toast';
+import { cn } from '@/lib/utils';
+import { CloudinaryImageModel } from '@/types/models/images';
+import { deleteImage, uploadImage } from '@/actions/image';
+import { set } from 'zod';
+import { generateCustomId } from '@/lib/genid';
+
+interface GuideImageCoverProps {
+  guideId: string;
+  data: CloudinaryImageModel | null;
+  onChange: () => void;
+}
+
+export function GuideImageCover({
+  guideId,
+  data,
+  onChange,
+}: GuideImageCoverProps) {
+  const { toast } = useToast();
 
   const [isUploading, setIsUploading] = useState(false);
+  const [fileToImport, setFileToImport] = useState<File | null>(null);
 
-  const dropzone = {
-    accept: {
-      "image/*": [".jpg", ".jpeg", ".png"],
+  useEffect(() => {
+    if (fileToImport) {
+      uploadFile();
+    }
+  }, [fileToImport]);
+
+  const uploadFile = async () => {
+    if (!fileToImport) {
+      return;
+    }
+    const file_name = generateCustomId();
+
+    const formData = new FormData();
+    formData.append('image', fileToImport);
+    formData.append('file_name', `guides_${guideId}_${file_name}-cover`);
+    formData.append('asset_folder', `guides_${guideId}`);
+
+    const uploadResponse = await uploadImage(formData);
+
+    if (!uploadResponse.success) {
+      toast({
+        variant: 'destructive',
+        description: 'Failed to upload image',
+      });
+    } else {
+      onChange();
+    }
+
+    setIsUploading(false);
+    setFileToImport(null);
+  };
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+      setIsUploading(true);
+
+      if (rejectedFiles.length > 0) {
+        if (rejectedFiles[0].errors[0].code === 'file-too-large') {
+          toast({
+            variant: 'destructive',
+            description: 'File is too large',
+          });
+        } else if (rejectedFiles[0].errors[0].code === 'file-invalid-type') {
+          toast({
+            variant: 'destructive',
+            description: 'Invalid file type. Please upload a PNG, JPG or JPEG',
+          });
+        } else {
+          toast({
+            variant: 'destructive',
+            description: 'Somenthing went wrong',
+          });
+        }
+        return;
+      }
+
+      setFileToImport(acceptedFiles[0]);
     },
-    multiple: true,
+    [],
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: {
+      'image/*': ['.jpg', '.jpeg', '.png'],
+    },
+    multiple: false,
     maxFiles: 1,
     maxSize: 1 * 1024 * 1024,
-  } satisfies DropzoneOptions;
+    onDrop,
+  });
 
-  const handleFileChange = (values: File[] | null) => {
+  const handleDelete = async (publicId: string) => {
     setIsUploading(true);
-    const createFileSet = (fileArray: File[]) =>
-      new Set(fileArray.map((file) => file.name));
-
-    // Create sets for files and values
-    const fileSet = createFileSet(files !== null ? files : []);
-    const valueSet = createFileSet(values !== null ? values : []);
-
-    // Select values in "values" that are not in "files"
-    const valuesNotInFiles = values?.filter((file) => !fileSet.has(file.name));
-
-    // Select values in "files" that are not in "values"
-    const filesNotInValues = files?.filter((file) => !valueSet.has(file.name));
-
-    setFiles(values);
+    const deleteResponse = await deleteImage(publicId.replaceAll('/', '_'));
+    console.log('deleteResponse', deleteResponse);
+    console.log('deleteResponse', deleteResponse.success);
+    if (deleteResponse.success) {
+      onChange();
+    } else {
+      toast({
+        variant: 'destructive',
+        description: 'Failed to delete image',
+      });
+    }
     setIsUploading(false);
   };
 
@@ -50,47 +121,69 @@ export function GuideImageCover() {
         <CardTitle>Guide Cover</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-6">
-          <FileUploader
-            value={files}
-            onValueChange={handleFileChange}
-            dropzoneOptions={dropzone}
-          >
-            {(!files || files?.length === 0) && (
-              <FileInput>
-                <div className="flex items-center justify-center h-32 w-full border-2 border-dashed bg-background rounded-md">
-                  <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
-                    <Upload className="w-8 h-8 mb-3 text-gray-500 dark:text-gray-400" />
-                    <p className="m-2 text-sm text-gray-500 dark:text-gray-400">
-                      <span className="font-semibold">Click to upload</span>
-                      &nbsp;or drag and drop
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      PNG, JPG or JPEG
-                    </p>
+        <div
+          className={`grid gap-6 ${isUploading ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
+        >
+          {isUploading ? (
+            <>
+              <div className="w-full h-full aspect-square inset-0 flex justify-center items-center">
+                <Loader2 className="w-8 h-8 animate-spin" />
+              </div>
+            </>
+          ) : (
+            <>
+              {!data ? (
+                <>
+                  <div {...getRootProps()} className="file_input">
+                    <input {...getInputProps()} />
+                    <div className="flex items-center justify-center h-32 w-full border-2 border-dashed bg-background rounded-md">
+                      <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
+                        <Upload className="w-8 h-8 mb-3 text-gray-500 dark:text-gray-400" />
+                        <p className="m-2 text-sm text-gray-500 dark:text-gray-400">
+                          <span className="font-semibold">Click to upload</span>
+                          &nbsp;or drag and drop
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          PNG, JPG or JPEG (MAX 1MB)
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </FileInput>
-            )}
-            <FileUploaderContent className="grid grid-cols-1 gap-2">
-              {files?.map((file, i) => (
-                <FileUploaderItem
-                  key={i}
-                  index={i}
-                  className="w-full h-full aspect-square p-0 rounded-md overflow-hidden"
-                  aria-roledescription={`file ${i + 1} containing ${file.name}`}
-                >
-                  <Image
-                    src={URL.createObjectURL(file)}
-                    alt={file.name}
-                    height={80}
-                    width={80}
-                    className="w-full h-full aspect-square p-0"
-                  />
-                </FileUploaderItem>
-              ))}
-            </FileUploaderContent>
-          </FileUploader>
+                </>
+              ) : (
+                <>
+                  <div className="flex justify-center">
+                    {data && (
+                      <div className="p-0 rounded-md overflow-hidden relative">
+                        <CldImage
+                          alt="Sample Image"
+                          src={data.publicId}
+                          width="800"
+                          height="800"
+                          crop={{
+                            type: 'thumb',
+                            source: true,
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className={cn('absolute', 'top-1 right-1')}
+                          onClick={() => {
+                            handleDelete(data.publicId);
+                          }}
+                        >
+                          <span className="sr-only">remove item</span>
+                          <div className="flex items-center justify-center w-6 h-6 bg-white bg-opacity-75 hover:bg-opacity-85 rounded-full">
+                            <Trash2 className="w-4 h-4 duration-200 ease-in-out" />
+                          </div>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </>
+          )}
         </div>
       </CardContent>
     </Card>

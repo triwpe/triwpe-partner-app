@@ -279,6 +279,49 @@ const reorderSectionItem = async (section_id: string, data: ApiSectionItemReorde
   return response;
 }
 
+const uploadImage = async (formData: FormData): Promise<Response> => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/images`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+    body: formData,
+  });
+  console.log('3. response', response);
+
+  return response;
+}
+
+const getImages = async (asset_folder: string): Promise<Response> => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/images/${encodeURI(asset_folder)}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+  });
+
+  return response;
+}
+
+const deleteImage = async (public_id: string): Promise<Response> => {
+  const session = await auth();
+
+  const response = await fetch(`${API_BASE_URL}/v1/images/${public_id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+  });
+
+  return response;
+}
+
 export { 
   createGuide, 
   createMaptilerLocation, 
@@ -291,6 +334,15 @@ export {
   createGuideSection, 
   updateGuideSection, 
   deleteGuideSection, 
-  createSectionItem, getSectionItems, updateSectionItem, deleteSectionItem, getGuides, reorderGuideSection, reorderSectionItem };
+  createSectionItem, 
+  getSectionItems, 
+  updateSectionItem, 
+  deleteSectionItem, 
+  getGuides, 
+  reorderGuideSection, 
+  reorderSectionItem,
+  uploadImage,
+  getImages,
+  deleteImage};
 
 
