@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from "@/components/ui/input-otp";
+} from '@/components/ui/input-otp';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import React, { useState } from "react";
-import { confirmEmailOtpSchema } from "@/lib/zod";
-import { confirmResetPasswordCode as confirmResetPasswordCodeAction } from "@/actions/partner";
-import router from "next/navigation";
-import Link from "next/link";
-import ResendPasswordResetConfirmationCode from "./ResendPasswordResetConfirmationCode";
-import FormAlert from "./FormAlert";
+} from '@/components/ui/card';
+import React, { useState } from 'react';
+import { confirmEmailOtpSchema } from '@/lib/zod';
+import { confirmResetPasswordCode as confirmResetPasswordCodeAction } from '@/actions/partner';
+import router from 'next/navigation';
+import Link from 'next/link';
+import ResendPasswordResetConfirmationCode from './ResendPasswordResetConfirmationCode';
+import FormAlert from './FormAlert';
 
 interface ConfirmPasswordResetFormProps {
   email: string;
@@ -32,7 +32,7 @@ export default function ConfirmPasswordResetForm({
   email,
   onSuccess,
 }: ConfirmPasswordResetFormProps) {
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState('');
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<any[]>([]);
@@ -58,11 +58,11 @@ export default function ConfirmPasswordResetForm({
   };
 
   return (
-    <Card className="mx-auto max-w-md p-4 border-gray-50 shadow-lg">
-      <form onSubmit={handleSubmit}>
+    <Card className="w-full md:w-[576px] py-5 px-7 text-[#344054] shadow-none border-[#e0e0e0] rounded-md">
+      <form onSubmit={handleSubmit} autoComplete="off">
         <CardHeader>
-          <CardTitle className="text-2xl">Verify Your Email! ✉️</CardTitle>
-          <CardDescription className="text-base">
+          <CardTitle className="text-2xl">Verify Your Email! 📫</CardTitle>
+          <CardDescription className="text-base text-[#969696]">
             Enter the 6-digit code sent to your inbox to reset your password.
           </CardDescription>
         </CardHeader>
@@ -85,13 +85,13 @@ export default function ConfirmPasswordResetForm({
                 </InputOTPGroup>
               </InputOTP>
               {confirmEmailError && (
-                <div className="text-left text-sm mt-2 text-red-500">
-                  The code is incorrect, please try again.
+                <div className="text-center text-sm mt-2 text-red-500">
+                  The code is invalid, please check and try again.
                 </div>
               )}
             </div>
             <Button
-              className="w-full"
+              className="w-full h-14 bg-[#1fd79b] text-[#344054] text-base hover:bg-[#1fd79b]"
               type="submit"
               disabled={isLoading || otp.length < 6}
             >

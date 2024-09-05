@@ -1,30 +1,64 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import SignInForm from "../_components/SignUpForm";
-import ConfirmEmailForm from "../_components/ConfirmEmailForm";
-import EmailConfirmed from "../_components/EmailConfirmed";
+import { useState } from 'react';
+import SignUpForm from '../_components/SignUpForm';
+import ConfirmEmailForm from '../_components/ConfirmEmailForm';
+import EmailConfirmed from '../_components/EmailConfirmed';
+import BusinessAndPreferencesForm from '../_components/BusinessAndPreferencesForm';
+import { PartnerDetailsCreateModel } from '@/types/models/partner-details';
+import { set } from 'zod';
+import { PartnerCreateModel } from '@/types/models/partner';
 
 export default function SignUpPage() {
   const [step, setStep] = useState<number>(1);
-  const [email, setEmail] = useState<string>("");
+  const [email, setEmail] = useState<string>('');
+  const [partner, setPartner] = useState<PartnerCreateModel | null>(null);
+  const [partnerDetails, setPartnerDetails] =
+    useState<PartnerDetailsCreateModel | null>(null);
 
-  const handleSignUpSuccess = (email: string) => {
-    setEmail(email);
+  const handlePartnerDetailsSuccess = async (
+    data: PartnerDetailsCreateModel,
+  ) => {
+    setPartnerDetails(data);
     setStep(2);
   };
 
-  const handleOtpSuccess = () => {
+  const handleSignUpSuccess = (data: PartnerCreateModel) => {
+    setPartner(data);
     setStep(3);
+  };
+
+  const handleBackPartnerDetails = (data: PartnerCreateModel) => {
+    setPartner(data);
+    setStep(1);
+  };
+
+  const handleOtpSuccess = () => {
+    setStep(4);
   };
 
   return (
     <div>
-      {step === 1 && <SignInForm onSuccess={handleSignUpSuccess} />}
-      {step === 2 && (
-        <ConfirmEmailForm email={email} onSuccess={handleOtpSuccess} />
+      {step === 1 && (
+        <BusinessAndPreferencesForm
+          partnerDetails={partnerDetails}
+          onSuccess={handlePartnerDetailsSuccess}
+        />
       )}
-      {step === 3 && <EmailConfirmed />}
+      {step === 2 && (
+        <SignUpForm
+          partner={partner}
+          onSuccess={handleSignUpSuccess}
+          onBack={handleBackPartnerDetails}
+        />
+      )}
+      {step === 3 && (
+        <ConfirmEmailForm
+          email={partner?.email || ''}
+          onSuccess={handleOtpSuccess}
+        />
+      )}
+      {step === 4 && <EmailConfirmed />}
     </div>
   );
 }

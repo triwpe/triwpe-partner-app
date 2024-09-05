@@ -38,6 +38,33 @@ export const signUpSchema = object({
     }),
 });
 
+export const businessAndPreferencesCompanySchema = object({
+  businessType: string({ required_error: "Business type is required" })
+  .min(1, "Business type is required"),
+  companyName: string({ required_error: "Company name is required" })
+  .min(1, "Company name is required")
+  .max(100, "Company name must be less than 50 characters"),
+  registeredCountry: string({ required_error: "Registered country is required" })
+  .min(1, "Registered business country is required"),
+  paymentCurrency: string({ required_error: "Preferred currency is required" })
+  .min(1, "Preferred payment currency is required"),
+});
+
+export const businessAndPreferencesIndividualSchema = object({
+  businessType: string({ required_error: "Business type is required" })
+  .min(1, "Business type is required"),  
+  firstName: string({ required_error: "First name is required" })
+  .min(1, "First name is required")
+  .max(50, "First name must be less than 50 characters"),
+  lastName: string({ required_error: "Last name is required" })
+  .min(1, "Last name is required")
+  .max(50, "Last name must be less than 50 characters"),
+  registeredCountry: string({ required_error: "Registered country is required" })
+  .min(1, "Registered business country is required"),
+  paymentCurrency: string({ required_error: "Preferred currency is required" })
+  .min(1, "Preferred payment currency is required"),
+});
+
 export const forgotPasswordSchema = object({
   email: string({ required_error: "Email is required" })
     .min(1, "Email is required")

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { resetPassword as resetPasswordAction } from "@/actions/partner";
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { resetPassword as resetPasswordAction } from '@/actions/partner';
 
 interface ResendEmailConfirmationCodeProps {
   email: string;
@@ -43,15 +43,15 @@ export default function ResendEmailConfirmationCode({
   };
 
   return (
-    <div className="mt-4 text-center text-sm">
-      Didn’t receive?{" "}
+    <div className="mt-4 text-center text-[#344054] text-sm">
+      Didn’t receive?{' '}
       {isTimerActive ? (
         <span className="text-gray-400">({timer}) Resend Code</span>
       ) : (
         <>
           <Link
             href="/sign-in"
-            className="underline"
+            className="underline font-medium text-[#0154b3]"
             onClick={handleResendClick}
           >
             Resend Code

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useSession } from "next-auth/react";
-import { signOut } from "next-auth/react";
+import { useSession } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from '@/components/ui/card';
 import {
   BellIcon,
   Languages,
@@ -12,45 +12,46 @@ import {
   Settings,
   Sun,
   User,
-} from "lucide-react";
-import { Button } from "../ui/button";
+} from 'lucide-react';
+import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+} from '@/components/ui/dropdown-menu';
+import { useState } from 'react';
 
-import Avatar from "boring-avatars";
+import Avatar from 'boring-avatars';
+import Link from 'next/link';
 
 export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const session = useSession();
   const [notifications, setNotifications] = useState<any>([
     {
-      text: "Your order has been delivered!",
-      date: "2 hours ago",
+      text: 'Your order has been delivered!',
+      date: '2 hours ago',
       isRead: false,
     },
     {
-      text: "Your order has been delivered!",
-      date: "2 hours ago",
+      text: 'Your order has been delivered!',
+      date: '2 hours ago',
       isRead: true,
     },
     {
-      text: "Your order has been delivered!",
-      date: "2 hours ago",
+      text: 'Your order has been delivered!',
+      date: '2 hours ago',
       isRead: true,
     },
     {
-      text: "Your order has been delivered!",
-      date: "2 hours ago",
+      text: 'Your order has been delivered!',
+      date: '2 hours ago',
       isRead: false,
     },
     {
-      text: "Your order has been delivered!",
-      date: "2 hours ago",
+      text: 'Your order has been delivered!',
+      date: '2 hours ago',
       isRead: false,
     },
   ]);
@@ -84,8 +85,8 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
                     className={`absolute top-0 right-0 w-2 h-2 rounded-full 
                 ${
                   notifications.find((x: any) => x.isRead === false)
-                    ? "bg-red-500"
-                    : "bg-transparent"
+                    ? 'bg-red-500'
+                    : 'bg-transparent'
                 }`}
                   ></div>
                   <BellIcon className="h-5 w-5" />
@@ -99,7 +100,7 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
                   >
                     <div
                       className={`w-2 h-2 rounded-full ${
-                        notification.isRead ? "bg-transparent" : "bg-red-500"
+                        notification.isRead ? 'bg-transparent' : 'bg-red-500'
                       }`}
                     ></div>
                     <div>
@@ -124,11 +125,11 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
                   variant="beam"
                   size={40}
                   colors={[
-                    "#F25C54",
-                    "#F27059",
-                    "#f4845f",
-                    "#f79d65",
-                    "#f7b267",
+                    '#F25C54',
+                    '#F27059',
+                    '#f4845f',
+                    '#f79d65',
+                    '#f7b267',
                   ]}
                 />
               </div>
@@ -138,13 +139,15 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
                 <div className="flex items-center justify-between gap-2 p-2">
                   <p className="text-sm font-medium text-neutral-500">
                     {session?.data?.email}
-                  </p>{" "}
+                  </p>{' '}
                 </div>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
+                <Link href="/dashboard/profile">
+                  <span>Profile</span>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />

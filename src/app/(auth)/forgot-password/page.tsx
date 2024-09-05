@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import ForgotPasswordForm from "../_components/ForgotPasswordForm";
-import ConfirmPasswordResetForm from "../_components/ConfirmPasswordResetForm";
-import UpdatePasswordForm from "../_components/UpdatePasswordForm";
-import PasswordUpdated from "../_components/PasswordUpdated";
+import { useState } from 'react';
+import ForgotPasswordForm from '../_components/ForgotPasswordForm';
+import ConfirmPasswordResetForm from '../_components/ConfirmPasswordResetForm';
+import UpdatePasswordForm from '../_components/UpdatePasswordForm';
+import PasswordUpdated from '../_components/PasswordUpdated';
 
 export default function ForgotPasswordPage() {
   const [step, setStep] = useState<number>(1);
-  const [email, setEmail] = useState<string>("");
-  const [otp, setOtp] = useState<string>("");
+  const [email, setEmail] = useState<string>('');
+  const [otp, setOtp] = useState<string>('');
 
   const handleForgotPasswordSuccess = (email: string) => {
     setEmail(email);
@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div>
+    <>
       {step === 1 && (
         <ForgotPasswordForm onSuccess={handleForgotPasswordSuccess} />
       )}
@@ -41,6 +41,6 @@ export default function ForgotPasswordPage() {
         />
       )}
       {step === 4 && <PasswordUpdated />}
-    </div>
+    </>
   );
 }
