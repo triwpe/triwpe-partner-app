@@ -39,10 +39,10 @@ export default async function PublicLayout({ children }: PublicLayoutProps) {
           </nav>
         </div>
       </header>
-      <main className="flex-grow flex justify-center items-center sm:p-1 bg-gray-100">
+      <main className="flex-grow flex justify-center items-center bg-gray-100">
         {children}
       </main>
-      <footer className="bottom-0 left-0 right-0 bg-muted py-6 text-sm text-white bg-[#21264e]">
+      <footer className="bottom-0 left-0 right-0 py-6 text-sm text-white bg-[#21264e]">
         <div className="container flex flex-col items-center justify-between gap-4 sm:flex-row">
           <p>&copy; 2024 Triwpe. All rights reserved.</p>
           <nav className="flex gap-4">
