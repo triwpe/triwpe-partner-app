@@ -28,6 +28,7 @@ export async function uploadImage(formData: FormData): Promise<ActionResponse<vo
 export async function fetchImages(asset_folder: string): Promise<ActionResponse<CloudinaryImageModel[]>> {
   try {
     const response = await partnerGuideApi.getImages(asset_folder);
+    console.log('response', response);
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -35,7 +36,11 @@ export async function fetchImages(asset_folder: string): Promise<ActionResponse<
     }
     
     const data: ApiCloudinaryImageResponse[] = await response.json();   
-    return { success: true, data: data.map(mapApiCloudinaryImageResponseToModel) };
+    console.log('data', data);
+    console.log('data.length', data.length);
+    console.log('data', data.length > 0 ? data.map(mapApiCloudinaryImageResponseToModel) : []);
+
+    return { success: true, data: data.length > 0 ? data.map(mapApiCloudinaryImageResponseToModel) : [] };
   } catch (error: any) {
     return { success: false, message: error.message };
   }

@@ -132,7 +132,7 @@ export function ReorderGuideSectionDialog({
             <AlertDialogTitle></AlertDialogTitle>
           </VisuallyHidden.Root>
           <AlertDialogDescription>
-            <Card className="border-0 shadow-none">
+            <Card className="border-0 shadow-none text-[#344054]">
               <CardHeader>
                 <CardTitle className="text-2xl">
                   Drag & drop to reorder data
@@ -158,7 +158,7 @@ export function ReorderGuideSectionDialog({
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
-                                className={`flex sections-center bg-slate-100 p-3 rounded-md cursor-move transition-all`}
+                                className={`flex h-14 items-center sections-center bg-slate-100 p-3 rounded-md cursor-move transition-all`}
                                 style={{
                                   ...provided.draggableProps.style,
                                   left: 'auto !important',
@@ -182,7 +182,11 @@ export function ReorderGuideSectionDialog({
                 </DragDropContext>
               </CardContent>
               <CardFooter className="gap-2 justify-end">
-                <Button className="gap-2" onClick={handleClose}>
+                <Button
+                  size="lg"
+                  className="h-14 bg-[#1fd79b] text-[#344054] text-base hover:bg-[#1fd79b]"
+                  onClick={handleClose}
+                >
                   Close
                 </Button>
               </CardFooter>

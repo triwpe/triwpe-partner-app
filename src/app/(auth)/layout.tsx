@@ -22,8 +22,8 @@ export default async function PublicLayout({ children }: PublicLayoutProps) {
         <div className="container flex h-20 items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center" prefetch={false}>
             <div className="flex justify-center items-center p-2 gap-2">
-              <Image src={Logo} width={175} height={40} alt="triwpe" />
-              <div className="text-md text-gray-400 font-medium">
+              <Image src={Logo} width={125} height={40} alt="triwpe" />
+              <div className="text-lg text-[#b1b1b1] font-medium">
                 for partners
               </div>
             </div>

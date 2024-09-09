@@ -1,55 +1,55 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowUpDown, Loader2, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
-import { NewGuideSectionDialog } from "./NewGuideSectionDialog";
-import { ReorderGuideSectionDialog } from "./ReorderGuideSectionDialog";
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowUpDown, Loader2, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { NewGuideSectionDialog } from './NewGuideSectionDialog';
+import { ReorderGuideSectionDialog } from './ReorderGuideSectionDialog';
 import {
   deleteGuideSection,
   deleteSectionItem,
   fetchGuideSections,
   updateGuideSection,
   updateSectionItem,
-} from "@/actions/guide";
+} from '@/actions/guide';
 import {
   createNewGuideSectionSchema,
   updateGuideSectionSchema,
   updateSectionItemSchema,
-} from "@/lib/zod";
-import { set } from "zod";
-import { Alert } from "@/components/Alert";
-import { useToast } from "@/components/ui/use-toast";
+} from '@/lib/zod';
+import { set } from 'zod';
+import { Alert } from '@/components/Alert';
+import { useToast } from '@/components/ui/use-toast';
 import {
   GuideSectionModel,
   GuideSectionUpdateModel,
-} from "@/types/models/guide-section";
+} from '@/types/models/guide-section';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from '@/components/ui/accordion';
 import {
   SectionItemModel,
   SectionItemUpdateModel,
-} from "@/types/models/section-item";
+} from '@/types/models/section-item';
 
 interface GuideSectionItemUpdateFormProps {
   item: SectionItemModel;
@@ -62,10 +62,10 @@ export function GuideSectionItemUpdateForm({
 }: GuideSectionItemUpdateFormProps) {
   const { toast } = useToast();
 
-  const [title, setTitle] = useState(item.title || "");
+  const [title, setTitle] = useState(item.title || '');
   const [description, setDescription] = useState(item.description);
   const [isVisibleOnDemo, setIsVisibleOnDemo] = useState<boolean>(
-    item.isVisibleOnDemo
+    item.isVisibleOnDemo,
   );
 
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
@@ -75,7 +75,7 @@ export function GuideSectionItemUpdateForm({
   const [formErrors, setFormErrors] = useState<any[]>([]);
 
   const handleUpdateItem = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.preventDefault();
 
@@ -100,19 +100,19 @@ export function GuideSectionItemUpdateForm({
     const updateResponse = await updateSectionItem(
       item.guideSectionId,
       item.id,
-      updated_data
+      updated_data,
     );
 
     if (updateResponse.success) {
       toast({
-        variant: "success",
-        description: "Item updated successfully",
+        variant: 'success',
+        description: 'Item updated successfully',
       });
       onItemUpdate();
     } else {
       toast({
-        variant: "destructive",
-        description: "Failed to update item",
+        variant: 'destructive',
+        description: 'Failed to update item',
       });
     }
 
@@ -129,19 +129,19 @@ export function GuideSectionItemUpdateForm({
 
     const deleteResponse = await deleteSectionItem(
       item.guideSectionId,
-      item.id
+      item.id,
     );
 
     if (deleteResponse.success) {
       toast({
-        variant: "success",
-        description: "Item deleted successfully",
+        variant: 'success',
+        description: 'Item deleted successfully',
       });
       onItemUpdate();
     } else {
       toast({
-        variant: "destructive",
-        description: "Failed to delete item",
+        variant: 'destructive',
+        description: 'Failed to delete item',
       });
     }
     setIsLoadingDelete(false);
@@ -163,19 +163,19 @@ export function GuideSectionItemUpdateForm({
 
   return (
     <div className="grid mt-4 gap-6 px-3">
-      <div className="grid gap-3">
+      <div className="grid gap-2">
         <Label htmlFor="name">Title</Label>
         <Input
           id="title"
           title="title"
           type="text"
-          className="w-full"
+          className="w-full h-14 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent"
           value={title}
           placeholder="Enter the full title"
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
-      <div className="grid gap-3">
+      <div className="grid gap-2">
         <Label htmlFor="description">Description</Label>
         <div>
           <Textarea
@@ -184,14 +184,14 @@ export function GuideSectionItemUpdateForm({
             value={description}
             placeholder="Write a description for your guide"
             onChange={(e) => setDescription(e.target.value)}
-            className={`h-32 ${
-              formErrors.some((error) => error.for === "description")
-                ? "border-red-600"
-                : ""
+            className={`h-32 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent ${
+              formErrors.some((error) => error.for === 'description')
+                ? 'border-red-600'
+                : ''
             }`}
           />
           <div className="mt-1 ml-1 text-xs text-red-600">
-            {formErrors.find((error) => error.for === "description")?.message}
+            {formErrors.find((error) => error.for === 'description')?.message}
           </div>
         </div>
       </div>
@@ -246,6 +246,7 @@ export function GuideSectionItemUpdateForm({
         <Button
           size="default"
           onClick={handleUpdateItem}
+          className="h-14 bg-[#1fd79b] text-[#344054] text-base hover:bg-[#1fd79b]"
           disabled={isLoadingUpdate}
         >
           {isLoadingUpdate ? (
@@ -253,12 +254,14 @@ export function GuideSectionItemUpdateForm({
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...
             </>
           ) : (
-            "Update Item"
+            'Update Item'
           )}
         </Button>
         <Button
           size="default"
+          variant={'outline'}
           onClick={handleDeleteItem}
+          className="h-14 border-[#d9d9d9] text-[#535773] text-base hover:bg-transparent hover:text-[#535773]"
           disabled={isLoadingDelete}
         >
           {isLoadingDelete ? (
@@ -266,7 +269,7 @@ export function GuideSectionItemUpdateForm({
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...
             </>
           ) : (
-            "Delete Item"
+            'Delete Item'
           )}
         </Button>
         <Alert

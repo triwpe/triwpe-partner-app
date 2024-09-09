@@ -1,48 +1,48 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowUpDown, Loader2, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
-import { NewGuideSectionDialog } from "./NewGuideSectionDialog";
-import { ReorderGuideSectionDialog } from "./ReorderGuideSectionDialog";
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowUpDown, Loader2, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { NewGuideSectionDialog } from './NewGuideSectionDialog';
+import { ReorderGuideSectionDialog } from './ReorderGuideSectionDialog';
 import {
   deleteGuideSection,
   fetchGuideSections,
   updateGuideSection,
-} from "@/actions/guide";
+} from '@/actions/guide';
 import {
   createNewGuideSectionSchema,
   updateGuideSectionSchema,
-} from "@/lib/zod";
-import { set } from "zod";
-import { Alert } from "@/components/Alert";
-import { useToast } from "@/components/ui/use-toast";
+} from '@/lib/zod';
+import { set } from 'zod';
+import { Alert } from '@/components/Alert';
+import { useToast } from '@/components/ui/use-toast';
 import {
   GuideSectionModel,
   GuideSectionUpdateModel,
-} from "@/types/models/guide-section";
+} from '@/types/models/guide-section';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from '@/components/ui/accordion';
 
 interface GuideSectionUpdateFormProps {
   section: GuideSectionModel;
@@ -57,9 +57,9 @@ export function GuideSectionUpdateForm({
 
   const [menuTitle, setMenuTitle] = useState(section.menuTitle);
   const [fullTitle, setFullTitle] = useState(section.fullTitle);
-  const [description, setDescription] = useState(section.description || "");
+  const [description, setDescription] = useState(section.description || '');
   const [isVisibleOnDemo, setIsVisibleOnDemo] = useState(
-    section.isVisibleOnDemo
+    section.isVisibleOnDemo,
   );
 
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
@@ -69,7 +69,7 @@ export function GuideSectionUpdateForm({
   const [formErrors, setFormErrors] = useState<any[]>([]);
 
   const handleUpdateSection = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.preventDefault();
 
@@ -97,19 +97,19 @@ export function GuideSectionUpdateForm({
     const updateResponse = await updateGuideSection(
       section.guideId,
       section.id,
-      updated_data
+      updated_data,
     );
 
     if (updateResponse.success) {
       toast({
-        variant: "success",
-        description: "Guide section updated successfully",
+        variant: 'success',
+        description: 'Guide section updated successfully',
       });
       onSectionUpdate();
     } else {
       toast({
-        variant: "destructive",
-        description: "Failed to update guide section",
+        variant: 'destructive',
+        description: 'Failed to update guide section',
       });
     }
 
@@ -126,19 +126,19 @@ export function GuideSectionUpdateForm({
 
     const deleteResponse = await deleteGuideSection(
       section.guideId,
-      section.id
+      section.id,
     );
 
     if (deleteResponse.success) {
       toast({
-        variant: "success",
-        description: "Guide section deleted successfully",
+        variant: 'success',
+        description: 'Guide section deleted successfully',
       });
       onSectionUpdate();
     } else {
       toast({
-        variant: "destructive",
-        description: "Failed to delete guide section",
+        variant: 'destructive',
+        description: 'Failed to delete guide section',
       });
     }
     setIsLoadingDelete(false);
@@ -159,55 +159,55 @@ export function GuideSectionUpdateForm({
   };
 
   return (
-    <div className="grid mt-4 gap-6 px-3">
-      <div className="grid gap-3">
+    <div className="grid gap-6 px-3 pt-4 pb-2">
+      <div className="grid gap-2">
         <Label htmlFor="name">Menu Title</Label>
         <div>
           <Input
             id="name"
             type="text"
-            className={`w-full ${
-              formErrors.some((error) => error.for === "menuTitle")
-                ? "border-red-600"
-                : ""
+            className={`w-full h-14 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent ${
+              formErrors.some((error) => error.for === 'menuTitle')
+                ? 'border-red-600'
+                : ''
             }`}
             value={menuTitle}
             onChange={(e) => setMenuTitle(e.target.value)}
             placeholder="Enter the menu title"
           />
           <div className="mt-1 ml-1 text-xs text-red-600">
-            {formErrors.find((error) => error.for === "menuTitle")?.message}
+            {formErrors.find((error) => error.for === 'menuTitle')?.message}
           </div>
         </div>
       </div>
-      <div className="grid gap-3">
+      <div className="grid gap-2">
         <Label htmlFor="name">Full Title</Label>
         <div>
           <Input
             id="name"
             type="text"
-            className={`w-full ${
-              formErrors.some((error) => error.for === "fullTitle")
-                ? "border-red-600"
-                : ""
+            className={`w-full h-14 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent ${
+              formErrors.some((error) => error.for === 'fullTitle')
+                ? 'border-red-600'
+                : ''
             }`}
             value={fullTitle}
             onChange={(e) => setFullTitle(e.target.value)}
             placeholder="Enter the full title"
           />
           <div className="mt-1 ml-1 text-xs text-red-600">
-            {formErrors.find((error) => error.for === "fullTitle")?.message}
+            {formErrors.find((error) => error.for === 'fullTitle')?.message}
           </div>
         </div>
       </div>
-      <div className="grid gap-3">
+      <div className="grid gap-2">
         <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Write a description for your guide"
-          className="min-h-32"
+          className="min-h-32 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent"
         />
       </div>
       <div className="flex items-center space-x-2">
@@ -222,6 +222,7 @@ export function GuideSectionUpdateForm({
         <Button
           size="default"
           onClick={handleUpdateSection}
+          className="h-14 bg-[#1fd79b] text-[#344054] text-base hover:bg-[#1fd79b]"
           disabled={isLoadingUpdate}
         >
           {isLoadingUpdate ? (
@@ -229,12 +230,14 @@ export function GuideSectionUpdateForm({
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...
             </>
           ) : (
-            "Update Section"
+            'Update Section'
           )}
         </Button>
         <Button
           size="default"
+          variant={'outline'}
           onClick={handleDeleteSection}
+          className="h-14 border-[#d9d9d9] text-[#535773] text-base hover:bg-transparent hover:text-[#535773]"
           disabled={isLoadingDelete}
         >
           {isLoadingDelete ? (
@@ -242,7 +245,7 @@ export function GuideSectionUpdateForm({
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...
             </>
           ) : (
-            "Delete Section"
+            'Delete Section'
           )}
         </Button>
         <Alert

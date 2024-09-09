@@ -153,7 +153,7 @@ export function GuideImagesUpload({
   };
 
   return (
-    <Card>
+    <Card className="text-[#344054] shadow-none border-[#e0e0e0] rounded-md">
       <CardHeader>
         <CardTitle>Guide Images</CardTitle>
       </CardHeader>

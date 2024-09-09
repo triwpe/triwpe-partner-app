@@ -1,22 +1,22 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { LoaderIcon, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { GuideProps } from "../_types/components";
+} from '@/components/ui/select';
+import { LoaderIcon, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { GuideProps } from '../_types/components';
 import {
   deleteGuideCategory,
   getCategories,
   updateGuideCategory,
-} from "@/actions/category";
-import { set } from "zod";
+} from '@/actions/category';
+import { set } from 'zod';
 
 interface GuideCategoriesFormProps {
   guideId: string;
@@ -71,7 +71,7 @@ export function GuideCategoriesForm({
       guideId,
       value,
       true,
-      selectedMainCategory
+      selectedMainCategory,
     );
 
     if (response.success) {
@@ -86,7 +86,7 @@ export function GuideCategoriesForm({
       guideId,
       value,
       false,
-      selectedFirstOptionalCategory
+      selectedFirstOptionalCategory,
     );
     if (response.success) {
       setSelectedFirstOptionalCategory(value);
@@ -100,7 +100,7 @@ export function GuideCategoriesForm({
       guideId,
       value,
       false,
-      selectedSecondOptionalCategory
+      selectedSecondOptionalCategory,
     );
     if (response.success) {
       setSelectedSecondOptionalCategory(value);
@@ -109,13 +109,13 @@ export function GuideCategoriesForm({
   };
 
   const handleClearMainCategory = async (
-    e: React.MouseEvent<HTMLButtonElement>
+    e: React.MouseEvent<HTMLButtonElement>,
   ) => {
     e.stopPropagation();
     setIsLoadingMainCategory(true);
     const response = await deleteGuideCategory(
       guideId,
-      selectedMainCategory ?? ""
+      selectedMainCategory ?? '',
     );
     if (response.success) {
       setSelectedMainCategory(undefined);
@@ -125,13 +125,13 @@ export function GuideCategoriesForm({
   };
 
   const handleClearFirstOptionalCategory = async (
-    e: React.MouseEvent<HTMLButtonElement>
+    e: React.MouseEvent<HTMLButtonElement>,
   ) => {
     e.stopPropagation();
     setIsLoadingFirstOptionalCategory(true);
     const response = await deleteGuideCategory(
       guideId,
-      selectedFirstOptionalCategory ?? ""
+      selectedFirstOptionalCategory ?? '',
     );
     if (response.success) {
       setSelectedFirstOptionalCategory(undefined);
@@ -141,13 +141,13 @@ export function GuideCategoriesForm({
   };
 
   const handleClearSecondOptionalCategory = async (
-    e: React.MouseEvent<HTMLButtonElement>
+    e: React.MouseEvent<HTMLButtonElement>,
   ) => {
     e.stopPropagation();
     setIsLoadingSecondOptionalCategory(true);
     const response = await deleteGuideCategory(
       guideId,
-      selectedSecondOptionalCategory ?? ""
+      selectedSecondOptionalCategory ?? '',
     );
     if (response.success) {
       setSelectedSecondOptionalCategory(undefined);
@@ -157,13 +157,13 @@ export function GuideCategoriesForm({
   };
 
   return (
-    <Card>
+    <Card className="text-[#344054] shadow-none border-[#e0e0e0] rounded-md">
       <CardHeader>
         <CardTitle>Category</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid gap-6">
-          <div className="grid gap-3">
+          <div className="grid gap-2">
             <Label htmlFor="main-category">Main category</Label>
             <div className="flex gap-1">
               <Select
@@ -176,13 +176,14 @@ export function GuideCategoriesForm({
                 <SelectTrigger
                   id="main-category"
                   aria-label="Select main category"
+                  className="h-14 border-[#d9d9d9] text-[#535773] focus:ring-0 focus:ring-transparent"
                 >
                   <SelectValue placeholder="Select the main category"></SelectValue>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="text-[#535773]">
                   {filterCategories([
-                    selectedFirstOptionalCategory ?? "",
-                    selectedSecondOptionalCategory ?? "",
+                    selectedFirstOptionalCategory ?? '',
+                    selectedSecondOptionalCategory ?? '',
                   ]).map((category) => (
                     <SelectItem
                       key={category.short_name}
@@ -210,7 +211,7 @@ export function GuideCategoriesForm({
             </div>
           </div>
 
-          <div className="grid gap-3">
+          <div className="grid gap-2">
             <Label htmlFor="first-optional-category">
               First optional category
             </Label>
@@ -225,13 +226,14 @@ export function GuideCategoriesForm({
                 <SelectTrigger
                   id="first-optional-category"
                   aria-label="Select first optional category"
+                  className="h-14 border-[#d9d9d9] text-[#535773] focus:ring-0 focus:ring-transparent"
                 >
                   <SelectValue placeholder="Select an additional category" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="text-[#535773]">
                   {filterCategories([
-                    selectedMainCategory ?? "",
-                    selectedSecondOptionalCategory ?? "",
+                    selectedMainCategory ?? '',
+                    selectedSecondOptionalCategory ?? '',
                   ]).map((category) => (
                     <SelectItem
                       key={category.short_name}
@@ -260,7 +262,7 @@ export function GuideCategoriesForm({
             </div>
           </div>
 
-          <div className="grid gap-3">
+          <div className="grid gap-2">
             <Label htmlFor="second-optional-category">
               Second optional category
             </Label>
@@ -275,13 +277,14 @@ export function GuideCategoriesForm({
                 <SelectTrigger
                   id="second-optional-category"
                   aria-label="Select second optional category"
+                  className="h-14 border-[#d9d9d9] text-[#535773] focus:ring-0 focus:ring-transparent"
                 >
                   <SelectValue placeholder="Select an additional category" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="text-[#535773]">
                   {filterCategories([
-                    selectedMainCategory ?? "",
-                    selectedFirstOptionalCategory ?? "",
+                    selectedMainCategory ?? '',
+                    selectedFirstOptionalCategory ?? '',
                   ]).map((category) => (
                     <SelectItem
                       key={category.short_name}

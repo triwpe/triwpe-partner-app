@@ -1,32 +1,32 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { NewGuideDialogTitleStep } from "./NewGuideDialogTitleStep";
-import { NewGuideDialogLocationStep } from "./NewGuideDialogLocationStep";
-import { useRouter } from "next/navigation";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { createNewGuideSectionSchema } from "@/lib/zod";
-import { createGuideSection } from "@/actions/guide";
-import { Loader, Loader2, Terminal, TriangleAlert, X } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { set } from "zod";
+} from '@/components/ui/card';
+import { NewGuideDialogTitleStep } from './NewGuideDialogTitleStep';
+import { NewGuideDialogLocationStep } from './NewGuideDialogLocationStep';
+import { useRouter } from 'next/navigation';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { createNewGuideSectionSchema } from '@/lib/zod';
+import { createGuideSection } from '@/actions/guide';
+import { Loader, Loader2, Terminal, TriangleAlert, X } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { set } from 'zod';
 
 interface NewGuideSectionDialogProps {
   isOpen: boolean;
@@ -43,9 +43,9 @@ export function NewGuideSectionDialog({
 }: NewGuideSectionDialogProps) {
   const router = useRouter();
 
-  const [menuTitle, setMenuTitle] = useState<string>("");
-  const [fullTitle, setFullTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+  const [menuTitle, setMenuTitle] = useState<string>('');
+  const [fullTitle, setFullTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
   const [isVisibleOnDemo, setIsVisibleOnDemo] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -65,21 +65,22 @@ export function NewGuideSectionDialog({
     });
 
     if (parseResponse.success) {
+      console.log('guideId', guideId);
       const createResponse = await createGuideSection(
         guideId,
         menuTitle,
         fullTitle,
         description,
-        isVisibleOnDemo
+        isVisibleOnDemo,
       );
       if (createResponse.success) {
-        setMenuTitle("");
-        setFullTitle("");
-        setDescription("");
+        setMenuTitle('');
+        setFullTitle('');
+        setDescription('');
         setIsVisibleOnDemo(false);
         onSuccess();
       } else {
-        setCreateError("Something went wrong. Please try again.");
+        setCreateError('Something went wrong. Please try again.');
       }
     } else {
       await addError(parseResponse.error);
@@ -90,9 +91,9 @@ export function NewGuideSectionDialog({
   const handleCancelDialog = async () => {
     setFormErrors([]);
     setCreateError(null);
-    setMenuTitle("");
-    setFullTitle("");
-    setDescription("");
+    setMenuTitle('');
+    setFullTitle('');
+    setDescription('');
     setIsVisibleOnDemo(false);
     onCancel();
   };
@@ -114,8 +115,8 @@ export function NewGuideSectionDialog({
             <AlertDialogTitle></AlertDialogTitle>
           </VisuallyHidden.Root>
           <AlertDialogDescription>
-            <Card className="border-0 shadow-none">
-              <form onSubmit={handleSubmit}>
+            <Card className="border-0 shadow-none text-[#344054]">
+              <form onSubmit={handleSubmit} autoComplete="off">
                 <CardHeader>
                   <CardTitle className="text-2xl">
                     Add a new guide section️
@@ -130,19 +131,19 @@ export function NewGuideSectionDialog({
                         <AlertDescription>{createError}</AlertDescription>
                       </Alert>
                     )}
-                    <div className="grid gap-3">
+                    <div className="grid gap-2">
                       <Label htmlFor="name">Menu Title</Label>
                       <div>
                         <Input
                           id="menu-title"
                           name="menu-title"
                           type="text"
-                          className={`w-full ${
+                          className={`w-full h-14 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent ${
                             formErrors.some(
-                              (error) => error.for === "menuTitle"
+                              (error) => error.for === 'menuTitle',
                             )
-                              ? "border-red-600"
-                              : ""
+                              ? 'border-red-600'
+                              : ''
                           }`}
                           placeholder="Enter the menu title"
                           value={menuTitle}
@@ -151,25 +152,25 @@ export function NewGuideSectionDialog({
                         <div className="mt-1 ml-1 text-xs text-red-600">
                           {
                             formErrors.find(
-                              (error) => error.for === "menuTitle"
+                              (error) => error.for === 'menuTitle',
                             )?.message
                           }
                         </div>
                       </div>
                     </div>
-                    <div className="grid gap-3">
+                    <div className="grid gap-2">
                       <Label htmlFor="name">Full Title</Label>
                       <div>
                         <Input
                           id="full-title"
                           name="full-title"
                           type="text"
-                          className={`w-full ${
+                          className={`w-full h-14 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent ${
                             formErrors.some(
-                              (error) => error.for === "fullTitle"
+                              (error) => error.for === 'fullTitle',
                             )
-                              ? "border-red-600"
-                              : ""
+                              ? 'border-red-600'
+                              : ''
                           }`}
                           placeholder="Enter the full title"
                           value={fullTitle}
@@ -178,19 +179,19 @@ export function NewGuideSectionDialog({
                         <div className="mt-1 ml-1 text-xs text-red-600">
                           {
                             formErrors.find(
-                              (error) => error.for === "fullTitle"
+                              (error) => error.for === 'fullTitle',
                             )?.message
                           }
                         </div>
                       </div>
                     </div>
-                    <div className="grid gap-3">
+                    <div className="grid gap-2">
                       <Label htmlFor="description">Description</Label>
                       <Textarea
                         id="description"
                         name="description"
                         placeholder="Write a description for your guide"
-                        className="min-h-32"
+                        className="min-h-32 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                       />
@@ -213,14 +214,20 @@ export function NewGuideSectionDialog({
                     variant="outline"
                     type="button"
                     onClick={handleCancelDialog}
+                    className="h-14 border-[#d9d9d9] text-[#535773] text-base hover:bg-transparent hover:text-[#535773]"
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={isLoading}>
+                  <Button
+                    size="lg"
+                    type="submit"
+                    disabled={isLoading}
+                    className="h-14 bg-[#1fd79b] text-[#344054] text-base hover:bg-[#1fd79b]"
+                  >
                     {isLoading && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     )}
-                    Create
+                    Add Section
                   </Button>
                 </CardFooter>
               </form>

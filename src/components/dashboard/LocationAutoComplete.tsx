@@ -1,30 +1,30 @@
-import { Command as CommandPrimitive } from "cmdk";
+import { Command as CommandPrimitive } from 'cmdk';
 import {
   useState,
   useRef,
   useCallback,
   type KeyboardEvent,
   useEffect,
-} from "react";
+} from 'react';
 
-import { Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Check } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-} from "../ui/command";
-import { Skeleton } from "../ui/skeleton";
-import { getLocation } from "@/actions/location";
+} from '../ui/command';
+import { Skeleton } from '../ui/skeleton';
+import { getLocation } from '@/actions/location';
 
 type ResponseData = {
   data: Option[];
 };
 
-export type Option = Record<"value" | "label", string> & Record<string, string>;
+export type Option = Record<'value' | 'label', string> & Record<string, string>;
 
 type AutoCompleteProps = {
   emptyMessage: string;
@@ -47,7 +47,7 @@ export const LocationAutoComplete = ({
 
   const [isOpen, setOpen] = useState(false);
   const [selected, setSelected] = useState<Option | undefined>(undefined);
-  const [inputValue, setInputValue] = useState<string>(value?.label || "");
+  const [inputValue, setInputValue] = useState<string>(value?.label || '');
   const [locations, setLocations] = useState<Option[]>([]);
 
   // Update isOpen based on inputValue length
@@ -67,7 +67,7 @@ export const LocationAutoComplete = ({
       }
 
       // Reset onValueChange if delete or backspace key is pressed
-      if (event.key === "Delete" || event.key === "Backspace") {
+      if (event.key === 'Delete' || event.key === 'Backspace') {
         onValueChange?.(undefined);
       }
 
@@ -78,9 +78,9 @@ export const LocationAutoComplete = ({
       }
 
       // This is not a default behaviour of the <input /> field
-      if (event.key === "Enter" && input.value !== "") {
+      if (event.key === 'Enter' && input.value !== '') {
         const optionToSelect = locations.find(
-          (location) => location.place_name === input.value
+          (location) => location.place_name === input.value,
         );
         if (optionToSelect) {
           setSelected(optionToSelect);
@@ -88,16 +88,16 @@ export const LocationAutoComplete = ({
         }
       }
 
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         input.blur();
       }
     },
-    [locations, onValueChange]
+    [locations, onValueChange],
   );
 
   const handleBlur = useCallback(() => {
     setOpen(false);
-    setInputValue(selected?.place_name ?? "");
+    setInputValue(selected?.place_name ?? '');
   }, [selected]);
 
   const handleSelectOption = useCallback(
@@ -113,7 +113,7 @@ export const LocationAutoComplete = ({
         inputRef?.current?.blur();
       }, 0);
     },
-    [onValueChange]
+    [onValueChange],
   );
 
   return (
@@ -131,14 +131,14 @@ export const LocationAutoComplete = ({
           onBlur={handleBlur}
           placeholder={placeholder}
           disabled={disabled}
-          className="border-0"
+          className="border-0 h-14 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent"
         />
       </div>
       <div className="relative">
         <div
           className={cn(
-            "animate-in fade-in-0 zoom-in-95 absolute top-0 z-10 w-full rounded-xl bg-white outline-none",
-            isOpen ? "block" : "hidden"
+            'animate-in fade-in-0 zoom-in-95 absolute top-0 z-10 w-full rounded-xl bg-white outline-none',
+            isOpen ? 'block' : 'hidden',
           )}
         >
           <CommandList className="rounded-lg ring-1 ring-slate-200">
@@ -163,8 +163,8 @@ export const LocationAutoComplete = ({
                       }}
                       onSelect={() => handleSelectOption(location)}
                       className={cn(
-                        "flex w-full items-center gap-2",
-                        !isSelected ? "pl-8" : null
+                        'flex w-full items-center gap-2',
+                        !isSelected ? 'pl-8' : null,
                       )}
                     >
                       {isSelected ? <Check className="w-4" /> : null}

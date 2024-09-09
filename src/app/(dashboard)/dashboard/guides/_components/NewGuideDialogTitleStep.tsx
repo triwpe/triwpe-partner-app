@@ -4,11 +4,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ChangeEvent, useState } from "react";
-import { Loader2 } from "lucide-react";
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ChangeEvent, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 interface NewGuideDialogTitleStepProps {
   isLoading: boolean;
@@ -21,7 +21,7 @@ export const NewGuideDialogTitleStep = ({
   onSuccess,
   onCancel,
 }: NewGuideDialogTitleStepProps) => {
-  const [newGuideTitle, setNewGuideTitle] = useState<string>("");
+  const [newGuideTitle, setNewGuideTitle] = useState<string>('');
 
   const handleTitleInput = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -32,7 +32,7 @@ export const NewGuideDialogTitleStep = ({
     onSuccess(newGuideTitle);
   };
   return (
-    <Card className="border-0 shadow-none">
+    <Card className="border-0 shadow-none text-[#344054]">
       <CardHeader>
         <CardTitle className="text-2xl">Name your guide ✏️</CardTitle>
       </CardHeader>
@@ -45,19 +45,24 @@ export const NewGuideDialogTitleStep = ({
                 name="title"
                 placeholder="Enter the guide title"
                 onChange={handleTitleInput}
+                className={`w-full h-14 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent`}
               />
             </div>
           </div>
         </div>
       </CardContent>
       <CardFooter className="gap-2 justify-end">
-        <Button onClick={onCancel} variant="outline">
+        <Button
+          onClick={onCancel}
+          variant="outline"
+          className="h-14 border-[#d9d9d9] text-[#535773] text-base hover:bg-transparent hover:text-[#535773]"
+        >
           Cancel
         </Button>
         <Button
           onClick={handleSubmit}
-          className="gap-2"
-          disabled={isLoading || newGuideTitle === ""}
+          className="h-14 bg-[#1fd79b] text-[#344054] text-base hover:bg-[#1fd79b]"
+          disabled={isLoading || newGuideTitle === ''}
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Create

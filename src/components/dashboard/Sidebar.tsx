@@ -1,9 +1,9 @@
-import { X } from "lucide-react";
-import { Gauge, MapPinned, Map } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import Logo from "../../../public/logo.svg";
-import { Label } from "../ui/label";
+import { X } from 'lucide-react';
+import { Gauge, MapPinned, Map } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import Logo from '../../../public/logo2.svg';
+import { Label } from '../ui/label';
 
 export default function Sidebar({
   isOpen,
@@ -12,33 +12,33 @@ export default function Sidebar({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const menuIconSize = "h-5 w-5";
+  const menuIconSize = 'h-5 w-5';
   const menuList = [
     {
-      menuGroup: "",
+      menuGroup: '',
       menuItems: [
         {
-          name: "Dashboard",
+          name: 'Dashboard',
           icon: <Gauge className={`${menuIconSize}`} />,
-          href: "#",
+          href: '#',
           order: 0,
         },
       ],
       order: 0,
     },
     {
-      menuGroup: "GUIDES & PACKAGES",
+      menuGroup: 'GUIDES & PACKAGES',
       menuItems: [
         {
-          name: "Create Guide",
+          name: 'Create Guide',
           icon: <MapPinned className={`${menuIconSize}`} />,
-          href: "/dashboard/guides/new",
+          href: '/dashboard/guides/new',
           order: 1,
         },
         {
-          name: "My Guides",
+          name: 'My Guides',
           icon: <Map className={`${menuIconSize}`} />,
-          href: "/dashboard/guides/all",
+          href: '/dashboard/guides/all',
           order: 0,
         },
       ],
@@ -49,7 +49,7 @@ export default function Sidebar({
   return (
     <div
       className={`fixed inset-y-0 left-0 w-64 bg-background border-r text-white transform transition-transform duration-300 z-40 ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
+        isOpen ? 'translate-x-0' : '-translate-x-full'
       } lg:translate-x-0 lg:static flex flex-col`}
     >
       <div className="flex items-center justify-between h-16 px-4">
@@ -58,7 +58,7 @@ export default function Sidebar({
           className="flex items-center gap-2 text-sm text-zinc-600"
         >
           <Image src={Logo} width={75} height={40} alt="triwpe" />
-          {process.env.NEXT_PUBLIC_STAGE !== "production" && (
+          {process.env.NEXT_PUBLIC_STAGE !== 'production' && (
             <div>| {process.env.NEXT_PUBLIC_STAGE}</div>
           )}
         </Link>
@@ -76,7 +76,7 @@ export default function Sidebar({
             .sort((a: any, b: any) => a.order - b.order)
             .map((menu: any, key: number) => (
               <div key={key} className="pb-3">
-                {menu.menuGroup !== "" && (
+                {menu.menuGroup !== '' && (
                   <Label className="flex px-3 pb-1 text-zinc-400 text-xs">
                     {menu.menuGroup}
                   </Label>

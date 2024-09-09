@@ -120,14 +120,8 @@ export default function Page({ params }: { params: PageParams }) {
   };
 
   const fetchGuideImages = async () => {
-    console.log('1. fetchGuideImages');
     const { success, data, message } = await fetchImages(`guides_${guideId}`);
-
     if (!success) {
-      toast({
-        variant: 'destructive',
-        description: 'Failed to get images',
-      });
       return;
     }
 
@@ -156,6 +150,7 @@ export default function Page({ params }: { params: PageParams }) {
         <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
           <GuideDetailsForm guide={guideData} />
           <GuideSections
+            guideId={guideId}
             sections={sections}
             onSectionUpdate={fetchGuideSectionData}
           />

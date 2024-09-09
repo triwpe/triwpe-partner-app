@@ -1,31 +1,31 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { NewGuideDialogTitleStep } from "./NewGuideDialogTitleStep";
-import { NewGuideDialogLocationStep } from "./NewGuideDialogLocationStep";
-import { useRouter } from "next/navigation";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { createNewSectionItemSchema } from "@/lib/zod";
-import { createSectionItem } from "@/actions/guide";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, X } from "lucide-react";
+} from '@/components/ui/card';
+import { NewGuideDialogTitleStep } from './NewGuideDialogTitleStep';
+import { NewGuideDialogLocationStep } from './NewGuideDialogLocationStep';
+import { useRouter } from 'next/navigation';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { createNewSectionItemSchema } from '@/lib/zod';
+import { createSectionItem } from '@/actions/guide';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Loader2, X } from 'lucide-react';
 
 interface NewSectionItemsDialogProps {
   isOpen: boolean;
@@ -42,8 +42,8 @@ export function NewSectionItemDialog({
   onSuccess,
   onCancel,
 }: NewSectionItemsDialogProps) {
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
   const [isVisibleOnDemo, setIsVisibleOnDemo] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -66,15 +66,15 @@ export function NewSectionItemDialog({
         sectionId,
         title,
         description,
-        isVisibleOnDemo
+        isVisibleOnDemo,
       );
       if (createResponse.success) {
-        setTitle("");
-        setDescription("");
+        setTitle('');
+        setDescription('');
         setIsVisibleOnDemo(false);
         onSuccess();
       } else {
-        setCreateError("Something went wrong. Please try again.");
+        setCreateError('Something went wrong. Please try again.');
       }
     } else {
       await addError(parseResponse.error);
@@ -85,8 +85,8 @@ export function NewSectionItemDialog({
   const handleCancelDialog = async () => {
     setFormErrors([]);
     setCreateError(null);
-    setTitle("");
-    setDescription("");
+    setTitle('');
+    setDescription('');
     setIsVisibleOnDemo(false);
     onCancel();
   };
@@ -108,7 +108,7 @@ export function NewSectionItemDialog({
             <AlertDialogTitle></AlertDialogTitle>
           </VisuallyHidden.Root>
           <AlertDialogDescription>
-            <Card className="border-0 shadow-none">
+            <Card className="border-0 shadow-none text-[#344054]">
               <form onSubmit={handleSubmit}>
                 <CardHeader>
                   <CardTitle className="text-2xl">
@@ -124,19 +124,19 @@ export function NewSectionItemDialog({
                         <AlertDescription>{createError}</AlertDescription>
                       </Alert>
                     )}
-                    <div className="grid gap-3">
+                    <div className="grid gap-2">
                       <Label htmlFor="name">Title</Label>
                       <Input
                         id="title"
                         name="title"
                         type="text"
-                        className="w-full"
+                        className="w-full h-14 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent"
                         placeholder="Enter the full title"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                       />
                     </div>
-                    <div className="grid gap-3">
+                    <div className="grid gap-2">
                       <Label htmlFor="description">Description</Label>
                       <div>
                         <Textarea
@@ -145,18 +145,18 @@ export function NewSectionItemDialog({
                           placeholder="Write a description for your guide"
                           value={description}
                           onChange={(e) => setDescription(e.target.value)}
-                          className={`h-32 ${
+                          className={`h-32 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent ${
                             formErrors.some(
-                              (error) => error.for === "description"
+                              (error) => error.for === 'description',
                             )
-                              ? "border-red-600"
-                              : ""
+                              ? 'border-red-600'
+                              : ''
                           }`}
                         />
                         <div className="mt-1 ml-1 text-xs text-red-600">
                           {
                             formErrors.find(
-                              (error) => error.for === "description"
+                              (error) => error.for === 'description',
                             )?.message
                           }
                         </div>
@@ -178,10 +178,16 @@ export function NewSectionItemDialog({
                     variant="outline"
                     type="button"
                     onClick={handleCancelDialog}
+                    className="h-14 border-[#d9d9d9] text-[#535773] text-base hover:bg-transparent hover:text-[#535773]"
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={isLoading}>
+                  <Button
+                    size="lg"
+                    type="submit"
+                    disabled={isLoading}
+                    className="h-14 bg-[#1fd79b] text-[#344054] text-base hover:bg-[#1fd79b]"
+                  >
                     {isLoading && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     )}

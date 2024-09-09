@@ -137,7 +137,7 @@ export function GuideSectionItems({
   }
 
   return (
-    <Card>
+    <Card className="text-[#344054] shadow-none border-[#e0e0e0] rounded-md">
       <CardHeader>
         <CardTitle>Section Items</CardTitle>
         <CardDescription>Manage the items for each section</CardDescription>
@@ -159,8 +159,8 @@ export function GuideSectionItems({
                   <AccordionContent className="pb-0">
                     <div className="grid mt-2 gap-6 pl-2">
                       {section.items.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center mt-16">
-                          <p className="text-gray-500">
+                        <div className="flex flex-col items-center justify-center mt-16 text-[#344054]">
+                          <p>
                             The{' '}
                             <span className="font-bold">
                               &ldquo;{section.menuTitle}&rdquo;{' '}
@@ -169,8 +169,8 @@ export function GuideSectionItems({
                             started! 🎯
                           </p>
                           <Button
-                            size="sm"
-                            className="mt-8 mb-8"
+                            size="lg"
+                            className="mt-8 mb-8 h-14 bg-[#1fd79b] text-[#344054] text-base hover:bg-[#1fd79b]"
                             onClick={handleOpenNewSectionItemDialog}
                           >
                             Add First Item
@@ -189,10 +189,11 @@ export function GuideSectionItems({
                             <div className="flex gap-1">
                               <Button
                                 size="sm"
+                                className="bg-[#1fd79b] text-[#344054] text-base hover:bg-[#1fd79b]"
                                 onClick={handleOpenNewSectionItemDialog}
                               >
                                 <Plus className="h-4 w-4" />
-                                Add Section
+                                Add Item
                               </Button>
                               <NewSectionItemDialog
                                 sectionId={section.id}
@@ -203,6 +204,7 @@ export function GuideSectionItems({
                               />
                               <Button
                                 size="sm"
+                                className="bg-[#2a77e9] text-[#fff] text-base hover:bg-[#2a77e9]"
                                 onClick={handleOpenReorderItemDialog}
                                 disabled={section.items.length < 2}
                               >
