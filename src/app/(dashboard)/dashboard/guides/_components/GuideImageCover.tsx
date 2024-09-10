@@ -12,6 +12,15 @@ import { deleteImage, uploadImage } from '@/actions/image';
 import { set } from 'zod';
 import { generateCustomId } from '@/lib/genid';
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+
 interface GuideImageCoverProps {
   guideId: string;
   data: CloudinaryImageModel | null;
@@ -42,8 +51,9 @@ export function GuideImageCover({
 
     const formData = new FormData();
     formData.append('image', fileToImport);
-    formData.append('file_name', `guides_${guideId}_${file_name}-cover`);
-    formData.append('asset_folder', `guides_${guideId}`);
+    formData.append('file_name', `guides_${guideId}_cover_${file_name}`);
+    formData.append('asset_folder', `guides_${guideId}_cover`);
+    formData.append('tags', `guides_${guideId}`);
 
     const uploadResponse = await uploadImage(formData);
 
@@ -154,30 +164,43 @@ export function GuideImageCover({
                 <>
                   <div className="flex justify-center">
                     {data && (
-                      <div className="p-0 rounded-md overflow-hidden relative">
-                        <CldImage
-                          alt="Sample Image"
-                          src={data.publicId}
-                          width="800"
-                          height="800"
-                          crop={{
-                            type: 'thumb',
-                            source: true,
-                          }}
-                        />
-                        <button
-                          type="button"
-                          className={cn('absolute', 'top-1 right-1')}
-                          onClick={() => {
-                            handleDelete(data.publicId);
-                          }}
-                        >
-                          <span className="sr-only">remove item</span>
-                          <div className="flex items-center justify-center w-6 h-6 bg-white bg-opacity-75 hover:bg-opacity-85 rounded-full">
-                            <Trash2 className="w-4 h-4 duration-200 ease-in-out" />
+                      <Dialog>
+                        <DialogTrigger>
+                          <div className="p-0 rounded-md overflow-hidden relative focus-visible:ring-0 focus-visible:ring-transparent">
+                            <CldImage
+                              alt="Sample Image"
+                              src={data.publicId}
+                              width="800"
+                              height="800"
+                              crop={{
+                                type: 'thumb',
+                                source: true,
+                              }}
+                            />
+                            <button
+                              type="button"
+                              className={cn('absolute', 'top-1 right-1')}
+                              onClick={() => {
+                                handleDelete(data.publicId);
+                              }}
+                            >
+                              <span className="sr-only">remove item</span>
+                              <div className="flex items-center justify-center w-6 h-6 bg-white bg-opacity-75 hover:bg-opacity-85 rounded-full">
+                                <Trash2 className="w-4 h-4 duration-200 ease-in-out" />
+                              </div>
+                            </button>
                           </div>
-                        </button>
-                      </div>
+                        </DialogTrigger>
+                        <DialogContent className="p-1 bg-white bg-opacity-80 border-none max-w-fit max-h-fit">
+                          <CldImage
+                            alt="Sample Image"
+                            src={data.publicId}
+                            height={data.height}
+                            width={data.width}
+                            className="rounded-md"
+                          />
+                        </DialogContent>
+                      </Dialog>
                     )}
                   </div>
                 </>

@@ -47,15 +47,23 @@ import { Alert } from '@/components/Alert';
 import { createNewSectionItemSchema } from '@/lib/zod';
 import { GuideSectionModel } from '@/types/models/guide-section';
 import { GuideSectionItemUpdateForm } from './GuideSectionItemUpdateForm';
+import { fetchImages } from '@/actions/image';
+import { CloudinaryImageModel } from '@/types/models/images';
 
 interface GuideSectionItemProps {
+  guideId: string;
   sections: GuideSectionModel[];
+  images: CloudinaryImageModel[];
   onItemUpdate: () => void;
+  onImagesUpdate: () => void;
 }
 
 export function GuideSectionItems({
+  guideId,
   sections,
+  images,
   onItemUpdate,
+  onImagesUpdate,
 }: GuideSectionItemProps) {
   const { toast } = useToast();
   const [files, setFiles] = useState<File[] | null>(null);
@@ -73,6 +81,9 @@ export function GuideSectionItems({
   const [isVisibleOnDemo, setIsVisibleOnDemo] = useState<boolean>(false);
 
   const [items, setItems] = useState<any[]>([]);
+  const [sectionImages, setSectionImages] = useState<CloudinaryImageModel[]>(
+    [],
+  );
 
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
@@ -238,8 +249,13 @@ export function GuideSectionItems({
                                   </AccordionTrigger>
                                   <AccordionContent>
                                     <GuideSectionItemUpdateForm
+                                      guideId={guideId}
                                       item={item}
+                                      itemImages={images?.filter((image) =>
+                                        image.publicId.includes(item.id),
+                                      )}
                                       onItemUpdate={onItemUpdate}
+                                      onImagesUpdate={onImagesUpdate}
                                     />
                                   </AccordionContent>
                                 </AccordionItem>

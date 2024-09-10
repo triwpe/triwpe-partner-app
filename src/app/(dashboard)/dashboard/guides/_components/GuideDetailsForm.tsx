@@ -25,6 +25,7 @@ import { updateGuideSchema, updateGuideSectionSchema } from '@/lib/zod';
 import { updateGuide } from '@/actions/guide';
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2 } from 'lucide-react';
+import InputCurrency from '@/components/InputCurrency';
 
 interface GuideDetailsFormProps {
   guide: GuideModel;
@@ -73,10 +74,12 @@ export function GuideDetailsForm({ guide }: GuideDetailsFormProps) {
     const updated_data: GuideUpdateModel = {
       title: title,
       duration: parseInt(duration),
-      price: parseInt(price),
+      price: parseFloat(price),
       language: language,
       description: description,
     };
+
+    console.log(updated_data);
 
     const updateResponse = await updateGuide(guide.id, updated_data);
 
@@ -158,19 +161,13 @@ export function GuideDetailsForm({ guide }: GuideDetailsFormProps) {
           <div className="grid gap-2">
             <Label htmlFor="name">Price</Label>
             <div>
-              <div className="flex">
-                <Input
-                  id="name"
-                  type="text"
-                  className="w-1/3 h-14 border-[#d9d9d9] rounded rounded-l-md rounded-r-none text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent"
-                  placeholder="Price"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-                <div className="flex w-16 h-14 justify-center items-center border border-l-0 border-[#d9d9d9] bg-[#f0f0f0] rounded rounded-l-none rounded-r-md text-[#535773] font-medium">
-                  <span>BRL</span>
-                </div>
-              </div>
+              <InputCurrency
+                name="price"
+                placeholder="0.00"
+                value={price}
+                onChange={(value) => setPrice(value)}
+                currency="BRL"
+              />
               <div className="mt-1 ml-1 text-xs text-red-600">
                 {formErrors.find((error) => error.for === 'price')?.message}
               </div>

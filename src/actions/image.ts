@@ -36,9 +36,6 @@ export async function fetchImages(asset_folder: string): Promise<ActionResponse<
     }
     
     const data: ApiCloudinaryImageResponse[] = await response.json();   
-    console.log('data', data);
-    console.log('data.length', data.length);
-    console.log('data', data.length > 0 ? data.map(mapApiCloudinaryImageResponseToModel) : []);
 
     return { success: true, data: data.length > 0 ? data.map(mapApiCloudinaryImageResponseToModel) : [] };
   } catch (error: any) {
@@ -65,5 +62,7 @@ const mapApiCloudinaryImageResponseToModel = (data: ApiCloudinaryImageResponse):
   return {
     publicId: data.public_id,
     assetFolder: data.asset_folder,
+    width: data.width,
+    height: data.height,
   };
 }

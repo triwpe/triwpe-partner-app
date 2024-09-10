@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { CloudinaryImageModel } from '@/types/models/images';
 import { generateCustomId } from '@/lib/genid';
 import { deleteImage, uploadImage } from '@/actions/image';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 interface GuideImagesUploadProps {
   guideId: string;
@@ -61,6 +62,7 @@ export function GuideImagesUpload({
       formData.append('image', file);
       formData.append('file_name', `guides_${guideId}_${file_name}`);
       formData.append('asset_folder', `guides_${guideId}`);
+      formData.append('tags', `guides_${guideId}`);
 
       const { success, data, message } = await uploadImage(formData);
       console.log('uploadResponse', success);
@@ -174,13 +176,10 @@ export function GuideImagesUpload({
                 <input {...getInputProps()} />
                 <div className="flex items-center justify-center h-32 w-full border-2 border-dashed bg-background rounded-md">
                   <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
-                    <Upload className="w-8 h-8 mb-3 text-gray-500 dark:text-gray-400" />
                     {data.length >= 3 ? (
                       <>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
                           You have reached the&nbsp;
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
                           <span className="font-semibold">
                             maximum number of images
                           </span>
@@ -188,7 +187,8 @@ export function GuideImagesUpload({
                       </>
                     ) : (
                       <>
-                        <p className="m-2 text-sm text-gray-500 dark:text-gray-400">
+                        <Upload className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                        <p className="m-2 text-xs text-gray-500 dark:text-gray-400">
                           <span className="font-semibold">Click to upload</span>
                           &nbsp;or drag and drop
                         </p>
@@ -203,34 +203,47 @@ export function GuideImagesUpload({
 
               <div className="grid grid-cols-3 gap-2">
                 {data?.map((file, index) => (
-                  <div
-                    className="p-0 rounded-md overflow-hidden relative"
-                    key={index}
-                  >
-                    <CldImage
-                      alt="Sample Image"
-                      key={index}
-                      src={file.publicId}
-                      width="800"
-                      height="800"
-                      crop={{
-                        type: 'thumb',
-                        source: true,
-                      }}
-                    />
-                    <button
-                      type="button"
-                      className={cn('absolute', 'top-1 right-1')}
-                      onClick={() => {
-                        handleDelete(file.publicId);
-                      }}
-                    >
-                      <span className="sr-only">remove item</span>
-                      <div className="flex items-center justify-center w-6 h-6 bg-white bg-opacity-75 hover:bg-opacity-85 rounded-full">
-                        <Trash2 className="w-4 h-4 duration-200 ease-in-out" />
+                  <Dialog>
+                    <DialogTrigger>
+                      <div
+                        className="p-0 rounded-md overflow-hidden relative focus-visible:ring-0 focus-visible:ring-transparent"
+                        key={index}
+                      >
+                        <CldImage
+                          alt="Sample Image"
+                          key={index}
+                          src={file.publicId}
+                          width="800"
+                          height="800"
+                          crop={{
+                            type: 'thumb',
+                            source: true,
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className={cn('absolute', 'top-1 right-1')}
+                          onClick={() => {
+                            handleDelete(file.publicId);
+                          }}
+                        >
+                          <span className="sr-only">remove item</span>
+                          <div className="flex items-center justify-center w-6 h-6 bg-white bg-opacity-75 hover:bg-opacity-85 rounded-full">
+                            <Trash2 className="w-4 h-4 duration-200 ease-in-out" />
+                          </div>
+                        </button>
                       </div>
-                    </button>
-                  </div>
+                    </DialogTrigger>
+                    <DialogContent className="p-1 bg-white bg-opacity-80 border-none max-w-fit max-h-fit">
+                      <CldImage
+                        alt="Sample Image"
+                        src={file.publicId}
+                        height={file.height}
+                        width={file.width}
+                        className="rounded-md"
+                      />
+                    </DialogContent>
+                  </Dialog>
                 ))}
               </div>
             </>

@@ -81,6 +81,9 @@ export default function Page({ params }: { params: PageParams }) {
     null,
   );
   const [guideImages, setGuideImages] = useState<CloudinaryImageModel[]>([]);
+  const [guideSectionImages, setGuideSectionImages] = useState<
+    CloudinaryImageModel[]
+  >([]);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -125,19 +128,23 @@ export default function Page({ params }: { params: PageParams }) {
       return;
     }
 
-    const cover: CloudinaryImageModel | undefined = data?.find((image) =>
-      image.publicId.includes('cover'),
+    const cover: CloudinaryImageModel | undefined = data?.find(
+      (image) =>
+        image.publicId.includes('cover') && !image.publicId.includes('section'),
     );
     setGuideCover(cover === undefined ? null : cover);
 
-    console.log('2. cover');
-
     const guideImages = data?.filter(
-      (image) => !image.publicId.includes('cover'),
+      (image) =>
+        !image.publicId.includes('cover') &&
+        !image.publicId.includes('section'),
     );
     setGuideImages(guideImages === undefined ? [] : guideImages);
 
-    console.log('3. guideImages');
+    const sectionImages = data?.filter((image) =>
+      image.publicId.includes('section'),
+    );
+    setGuideSectionImages(sectionImages === undefined ? [] : sectionImages);
   };
 
   if (isLoading || !guideData) {
@@ -155,8 +162,11 @@ export default function Page({ params }: { params: PageParams }) {
             onSectionUpdate={fetchGuideSectionData}
           />
           <GuideSectionItems
+            guideId={guideId}
             sections={sections}
+            images={guideSectionImages}
             onItemUpdate={fetchGuideSectionData}
+            onImagesUpdate={fetchGuideImages}
           />
         </div>
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
