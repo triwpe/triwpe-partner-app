@@ -203,7 +203,7 @@ export function GuideImagesUpload({
 
               <div className="grid grid-cols-3 gap-2">
                 {data?.map((file, index) => (
-                  <Dialog>
+                  <Dialog key={index}>
                     <DialogTrigger>
                       <div
                         className="p-0 rounded-md overflow-hidden relative focus-visible:ring-0 focus-visible:ring-transparent"

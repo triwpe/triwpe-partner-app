@@ -362,7 +362,7 @@ export function GuideSectionItemUpdateForm({
           <>
             <div className="grid grid-cols-5 gap-2">
               {itemImages?.map((file, index) => (
-                <Dialog>
+                <Dialog key={index}>
                   <DialogTrigger>
                     <div
                       className="w-full h-full aspect-square p-0 rounded-md overflow-hidden relative focus-visible:ring-0 focus-visible:ring-transparent"
