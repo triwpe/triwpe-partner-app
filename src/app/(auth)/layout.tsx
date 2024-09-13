@@ -4,17 +4,14 @@ import { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
 import Logo from '../../../public/logo2.svg';
+import CookiesService from '@/lib/cookies';
 
 interface PublicLayoutProps {
   children: ReactNode;
 }
 
 export default async function PublicLayout({ children }: PublicLayoutProps) {
-  const session = await auth();
-
-  if (session) {
-    redirect('/dashboard');
-  }
+  const token = await CookiesService.getAuthToken();
 
   return (
     <div className="flex min-h-screen flex-col">

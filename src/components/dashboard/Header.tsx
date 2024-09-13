@@ -1,7 +1,6 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { signOut } from 'next-auth/react';
 
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -25,9 +24,13 @@ import { useState } from 'react';
 
 import Avatar from 'boring-avatars';
 import Link from 'next/link';
+import { signOut } from '@/actions/partner';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
 
 export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
-  const session = useSession();
+  const { user } = useUser();
+  const router = useRouter();
   const [notifications, setNotifications] = useState<any>([
     {
       text: 'Your order has been delivered!',
@@ -55,6 +58,11 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
       isRead: false,
     },
   ]);
+
+  const logOut = async () => {
+    await signOut();
+    router.push('/sign-in');
+  };
 
   return (
     <header className="top-0 left-0 w-full pt-4 px-6 bg-muted/40 z-10 lg:z-30">
@@ -119,9 +127,9 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div>
+              <div className="hover:cursor-pointer">
                 <Avatar
-                  name={session?.data?.email}
+                  name={user?.email}
                   variant="beam"
                   size={40}
                   colors={[
@@ -138,7 +146,7 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
               <DropdownMenuItem>
                 <div className="flex items-center justify-between gap-2 p-2">
                   <p className="text-sm font-medium text-neutral-500">
-                    {session?.data?.email}
+                    {user?.email}
                   </p>{' '}
                 </div>
               </DropdownMenuItem>
@@ -158,7 +166,7 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
                 <Button
                   className="flex justify-start pl-0 text-left hover:bg-transparent"
                   variant="ghost"
-                  onClick={() => signOut()}
+                  onClick={logOut}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>

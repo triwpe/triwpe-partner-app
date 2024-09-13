@@ -11,12 +11,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
-
-import { signIn } from 'next-auth/react';
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { signInSchema } from '@/lib/zod';
 import FormAlert from './FormAlert';
+import { signIn } from '@/actions/partner';
 
 interface SignInFormProps {
   onSuccess: (data: {
@@ -46,14 +45,10 @@ export default function SignInForm({ onSuccess }: SignInFormProps) {
     });
 
     if (response.success) {
-      const signInResult = await signIn('credentials', {
-        username: email,
-        password: password,
-        redirect: false,
-      });
+      const { success, data, error, message } = await signIn(email, password);
 
-      if (signInResult?.error) {
-        switch (signInResult.code) {
+      if (!success) {
+        switch (error) {
           case 'INVALID_CREDENTIALS':
             setSignInError(
               "Incorrect username or password. Please try again or click 'Forgot password' to reset it.",

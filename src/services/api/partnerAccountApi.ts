@@ -1,6 +1,9 @@
 'use server';
 
+import CookiesService from "@/lib/cookies";
 import { PartnerLoginRequest, PartnerCreateRequest, VerifyTokenRequest, PartnerPasswordResetRequest } from "@/types/partner";
+import { Cookie } from "next/font/google";
+import { cookies } from 'next/headers';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_TRIWPE_PARTNER_API_URL;
 
@@ -42,6 +45,23 @@ const getPartner = async (token: string) => {
   });
   return res;
 };
+
+const getPartnerInfo = async() => {
+  const access_token = await CookiesService.getAuthToken();
+  if (!access_token) {
+    return null;
+  } 
+  
+  const res = await fetch(`${API_BASE_URL}/v1/partners/me`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  });  
+  return res;
+};
+
+
 
 const confirmEmail = async (data: VerifyTokenRequest) => {
   const response = await fetch(`${API_BASE_URL}/v1/partners/email/verify`, {
@@ -101,5 +121,5 @@ const updatePassword = async (data: PartnerPasswordResetRequest) => {
   return res;
 };
 
-export { signInPartnerAccount, getPartner, createPartnerAccount, confirmEmail, resendEmailConfirmation, resetPassword, confirmResetPasswordCode, updatePassword };
+export { signInPartnerAccount, getPartner, createPartnerAccount, confirmEmail, resendEmailConfirmation, resetPassword, confirmResetPasswordCode, updatePassword, getPartnerInfo };
 

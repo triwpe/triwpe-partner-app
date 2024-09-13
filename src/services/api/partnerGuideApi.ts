@@ -6,6 +6,9 @@ import { auth } from "@/auth";
 import { ApiGuideSectionCreateRequest, ApiGuideSectionReorderRequest, ApiGuideSectionUpdateRequest, GuideSectionUpdateModel } from "@/types/models/guide-section";
 import { ApiSectionItemReorderRequest, ApiSectionItemUpdateRequest } from "@/types/models/section-item";
 import { ApiGuideUpdateRequest } from "@/types/models/guides";
+import { cookies } from "next/headers";
+import { Cookie } from "next/font/google";
+import CookiesService from "@/lib/cookies";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_TRIWPE_PARTNER_GUIDE_API_URL;
 
@@ -21,13 +24,13 @@ const createMaptilerLocation = async (data: MaptilerLocationCreateRequest) => {
 };
 
 const createGuide = async (data: GuideCreateRequest) => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",     
-      Authorization: `Bearer ${session?.accessToken}`,    
+      Authorization: `Bearer ${token}`,    
     },
     body: JSON.stringify({
       title: data.title,
@@ -40,13 +43,13 @@ const createGuide = async (data: GuideCreateRequest) => {
 
 
 const createGuideSection = async (id: string, data: GuideSectionCreateRequest) => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/${id}/sections`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -68,13 +71,13 @@ const getCategories = async () => {
 }
 
 const updateGuideCategory = async (id: string, data: GuideCategoryUpsertRequest) => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/${id}/categories`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -83,13 +86,13 @@ const updateGuideCategory = async (id: string, data: GuideCategoryUpsertRequest)
 };
 
 const deleteGuideCategory = async (id: string, category_id: string) => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/${id}/categories/${category_id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -97,13 +100,13 @@ const deleteGuideCategory = async (id: string, category_id: string) => {
 }
 
 const createSectionItem = async (section_id: string, data: SectionItemCreateRequest) => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/sections/${section_id}/items`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -112,13 +115,13 @@ const createSectionItem = async (section_id: string, data: SectionItemCreateRequ
 }
 
 const getSectionItems = async (section_id: string) => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/sections/${section_id}/items`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -128,13 +131,13 @@ const getSectionItems = async (section_id: string) => {
 
 
 const deleteSectionItem = async (section_id: string, item_id: string) => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/sections/${section_id}/items/${item_id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -149,13 +152,13 @@ const deleteSectionItem = async (section_id: string, item_id: string) => {
 
 //NEW
 const getGuideById = async (guide_id: string): Promise<Response> => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/${guide_id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -163,13 +166,13 @@ const getGuideById = async (guide_id: string): Promise<Response> => {
 };
 
 const updateGuide = async (guide_id: string, data: ApiGuideUpdateRequest): Promise<Response> => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/${guide_id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -178,13 +181,13 @@ const updateGuide = async (guide_id: string, data: ApiGuideUpdateRequest): Promi
 }
 
 const getGuideSections = async (guide_id: string): Promise<Response> => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/${guide_id}/sections`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -192,13 +195,12 @@ const getGuideSections = async (guide_id: string): Promise<Response> => {
 };
 
 const updateGuideSection = async (guide_id: string, section_id: string, data: ApiGuideSectionUpdateRequest): Promise<Response> => {
-  const session = await auth();
-
+  const token = await CookiesService.getAuthToken();
   const response = await fetch(`${API_BASE_URL}/v1/guides/${guide_id}/sections/${section_id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -207,13 +209,13 @@ const updateGuideSection = async (guide_id: string, section_id: string, data: Ap
 }
 
 const deleteGuideSection = async (guide_id: string, section_id: string): Promise<Response>  => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/${guide_id}/sections/${section_id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -221,13 +223,13 @@ const deleteGuideSection = async (guide_id: string, section_id: string): Promise
 }
 
 const reorderGuideSection = async (guide_id: string, data: ApiGuideSectionReorderRequest[]): Promise<Response> => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/${guide_id}/sections/reorder`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -236,13 +238,13 @@ const reorderGuideSection = async (guide_id: string, data: ApiGuideSectionReorde
 }
 
 const updateSectionItem = async (section_id: string, item_id: string, data: ApiSectionItemUpdateRequest): Promise<Response> => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/sections/${section_id}/items/${item_id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -251,13 +253,13 @@ const updateSectionItem = async (section_id: string, item_id: string, data: ApiS
 }
 
 const getGuides = async (): Promise<Response> => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -265,13 +267,13 @@ const getGuides = async (): Promise<Response> => {
 };
 
 const reorderSectionItem = async (section_id: string, data: ApiSectionItemReorderRequest[]): Promise<Response> => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/guides/sections/${section_id}/items/reorder`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -280,12 +282,12 @@ const reorderSectionItem = async (section_id: string, data: ApiSectionItemReorde
 }
 
 const uploadImage = async (formData: FormData): Promise<Response> => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/images`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
     body: formData,
   });
@@ -295,13 +297,13 @@ const uploadImage = async (formData: FormData): Promise<Response> => {
 }
 
 const getImages = async (asset_folder: string): Promise<Response> => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/images/${encodeURI(asset_folder)}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -309,13 +311,13 @@ const getImages = async (asset_folder: string): Promise<Response> => {
 }
 
 const deleteImage = async (public_id: string): Promise<Response> => {
-  const session = await auth();
+  const token = await CookiesService.getAuthToken();
 
   const response = await fetch(`${API_BASE_URL}/v1/images/${public_id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
