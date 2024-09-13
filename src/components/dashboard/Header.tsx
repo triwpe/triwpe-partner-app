@@ -63,8 +63,8 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
   };
 
   return (
-    <header className="top-0 left-0 w-full pt-4 px-6 bg-muted/40 z-10 lg:z-30">
-      <Card>
+    <header className="top-0 left-0 w-full bg-muted/40 z-10 lg:z-30">
+      <Card className="text-[#344054] shadow-none border-[#e0e0e0] rounded-none border-l-0">
         <CardContent className="flex h-14 items-center gap-1 px-4 lg:h-[60px] lg:px-6 py-0">
           <button
             className="lg:hidden text-gray-700 focus:outline-none"
