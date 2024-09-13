@@ -2,7 +2,6 @@
 
 import { MaptilerLocationCreateRequest } from "@/types/location";
 import { GuideCategoryUpsertRequest, GuideCreateRequest, GuideSectionCreateRequest, GuideSectionUpdateRequest, GuideUpdateRequest, SectionItemCreateRequest, SectionItemUpdateRequest } from "@/types/guide";
-import { auth } from "@/auth";
 import { ApiGuideSectionCreateRequest, ApiGuideSectionReorderRequest, ApiGuideSectionUpdateRequest, GuideSectionUpdateModel } from "@/types/models/guide-section";
 import { ApiSectionItemReorderRequest, ApiSectionItemUpdateRequest } from "@/types/models/section-item";
 import { ApiGuideUpdateRequest } from "@/types/models/guides";

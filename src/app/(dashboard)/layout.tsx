@@ -1,6 +1,5 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import { ReactNode, Suspense, useState } from 'react';
 import { redirect } from 'next/navigation';
 import Sidebar from '@/components/dashboard/Sidebar';

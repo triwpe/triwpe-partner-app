@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { auth } from '@/auth';
 import { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';

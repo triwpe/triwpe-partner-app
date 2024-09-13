@@ -1,7 +1,5 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
-
 import { Card, CardContent } from '@/components/ui/card';
 import {
   BellIcon,
