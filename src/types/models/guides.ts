@@ -8,6 +8,7 @@ export interface GuideModel {
   location: MaptilerLocationModel;
   description?: string;
   duration?: number;
+  currency: string;
   price?: number;
   language?: string;
   categories?: GuideCategoryModel[];
@@ -32,6 +33,7 @@ export interface ApiGuideResponse {
   location: ApiMaptilerLocationResponse;
   description?: string;
   duration?: number;
+  currency: string;
   price?: number;
   language?: string;
   categories?: ApiGuideCategoryResponse[];

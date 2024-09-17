@@ -166,7 +166,7 @@ export function GuideDetailsForm({ guide }: GuideDetailsFormProps) {
                 placeholder="0.00"
                 value={price}
                 onChange={(value) => setPrice(value)}
-                currency="BRL"
+                currency={guide.currency}
               />
               <div className="mt-1 ml-1 text-xs text-red-600">
                 {formErrors.find((error) => error.for === 'price')?.message}

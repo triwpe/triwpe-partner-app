@@ -263,6 +263,7 @@ const mapApiGuideResponseToModel = (data: ApiGuideResponse): GuideModel => {
     location: mapApiMaptilerLocationResponseToModel(data.location),
     description: data.description,
     duration: data.duration,
+    currency: data.currency,
     price: data.price,
     language: data.language,
     categories: data.categories?.map(mapApiGuideCategoryResponseToModel),
