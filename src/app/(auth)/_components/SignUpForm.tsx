@@ -18,15 +18,18 @@ import Link from 'next/link';
 import { signUpSchema } from '@/lib/zod';
 import FormAlert from './FormAlert';
 import { PartnerCreateModel } from '@/types/models/partner';
+import { PartnerDetailCreateModel } from '@/types/models/partner-details';
 
 interface SignUpFormProps {
   partner: PartnerCreateModel | null;
+  partnerDetails: PartnerDetailCreateModel | null;
   onSuccess: (data: PartnerCreateModel) => void;
   onBack: (data: PartnerCreateModel) => void;
 }
 
 export default function SignUpForm({
   partner,
+  partnerDetails,
   onSuccess,
   onBack,
 }: SignUpFormProps) {
@@ -50,28 +53,39 @@ export default function SignUpForm({
     });
 
     if (response.success) {
-      const result = await signUpAction(email, password);
+      if (!partnerDetails) {
+        setIsLoading(false);
+        return;
+      }
 
-      if (result?.message) {
-        setSignUpError(result.message);
+      const data: PartnerCreateModel = {
+        email: email,
+        password: password,
+        detail: partnerDetails,
+      };
+
+      const { success, message } = await signUpAction(data);
+
+      if (!success) {
+        setSignUpError(message as string);
       } else {
-        const data: PartnerCreateModel = {
-          email: email,
-          password: password,
-        };
         onSuccess(data);
       }
     } else {
       await addError(response.error);
     }
-
     setIsLoading(false);
   };
 
   const handleBack = async () => {
+    if (!partnerDetails) {
+      return;
+    }
+
     const data: PartnerCreateModel = {
       email: email,
       password: password,
+      detail: partnerDetails,
     };
     onBack(data);
   };

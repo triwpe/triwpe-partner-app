@@ -1,6 +1,7 @@
 'use server';
 
 import CookiesService from "@/lib/cookies";
+import { ApiPartnerCreateRequest } from "@/types/models/partner";
 import { PartnerLoginRequest, PartnerCreateRequest, VerifyTokenRequest, PartnerPasswordResetRequest } from "@/types/partner";
 import { Cookie } from "next/font/google";
 import { cookies } from 'next/headers';
@@ -21,21 +22,6 @@ const signInPartnerAccount = async (data: PartnerLoginRequest) => {
   return response;
 };
 
-const createPartnerAccount = async (data: PartnerCreateRequest) => {
-  const response = await fetch(`${API_BASE_URL}/v1/partners`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: data.email,
-      password: data.password,
-    }),
-  });
-
-  return response;
-};
-
 const getPartner = async (token: string) => {
   const res = await fetch(`${API_BASE_URL}/v1/partners/me`, {
     method: "GET",
@@ -43,21 +29,6 @@ const getPartner = async (token: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return res;
-};
-
-const getPartnerInfo = async() => {
-  const access_token = await CookiesService.getAuthToken();
-  if (!access_token) {
-    return null;
-  } 
-  
-  const res = await fetch(`${API_BASE_URL}/v1/partners/me`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${access_token}`,
-    },
-  });  
   return res;
 };
 
@@ -121,5 +92,39 @@ const updatePassword = async (data: PartnerPasswordResetRequest) => {
   return res;
 };
 
-export { signInPartnerAccount, getPartner, createPartnerAccount, confirmEmail, resendEmailConfirmation, resetPassword, confirmResetPasswordCode, updatePassword, getPartnerInfo };
+// ***** NEW *****
+const createPartnerAccount = async (data: ApiPartnerCreateRequest): Promise<Response> => {
+  const response = await fetch(`${API_BASE_URL}/v1/partners`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  return response;
+}
+
+
+const getLoggedPartner = async(): Promise<Response> => {
+  const access_token = await CookiesService.getAuthToken();
+  if (!access_token) {
+    return new Response(null, { status: 401 });
+  }
+  
+  const response = await fetch(`${API_BASE_URL}/v1/partners/me`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  });
+
+  return response;
+};
+
+
+export { 
+  createPartnerAccount, getLoggedPartner,
+  signInPartnerAccount, getPartner, confirmEmail, resendEmailConfirmation, resetPassword, confirmResetPasswordCode, updatePassword 
+};
 

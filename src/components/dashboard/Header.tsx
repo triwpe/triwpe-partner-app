@@ -144,7 +144,13 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
               <DropdownMenuItem>
                 <div className="flex items-center justify-between gap-2 p-2">
                   <p className="text-sm font-medium text-neutral-500">
-                    {user?.email}
+                    {user?.detail.businessType.toLowerCase() === 'company' ? (
+                      <>{user?.detail.companyName}</>
+                    ) : (
+                      <>
+                        {user?.detail.firstName} {user?.detail.lastName}
+                      </>
+                    )}
                   </p>{' '}
                 </div>
               </DropdownMenuItem>

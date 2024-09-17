@@ -5,7 +5,7 @@ import SignUpForm from '../_components/SignUpForm';
 import ConfirmEmailForm from '../_components/ConfirmEmailForm';
 import EmailConfirmed from '../_components/EmailConfirmed';
 import BusinessAndPreferencesForm from '../_components/BusinessAndPreferencesForm';
-import { PartnerDetailsCreateModel } from '@/types/models/partner-details';
+import { PartnerDetailCreateModel } from '@/types/models/partner-details';
 import { set } from 'zod';
 import { PartnerCreateModel } from '@/types/models/partner';
 
@@ -14,10 +14,10 @@ export default function SignUpPage() {
   const [email, setEmail] = useState<string>('');
   const [partner, setPartner] = useState<PartnerCreateModel | null>(null);
   const [partnerDetails, setPartnerDetails] =
-    useState<PartnerDetailsCreateModel | null>(null);
+    useState<PartnerDetailCreateModel | null>(null);
 
   const handlePartnerDetailsSuccess = async (
-    data: PartnerDetailsCreateModel,
+    data: PartnerDetailCreateModel,
   ) => {
     setPartnerDetails(data);
     setStep(2);
@@ -48,6 +48,7 @@ export default function SignUpPage() {
       {step === 2 && (
         <SignUpForm
           partner={partner}
+          partnerDetails={partnerDetails}
           onSuccess={handleSignUpSuccess}
           onBack={handleBackPartnerDetails}
         />

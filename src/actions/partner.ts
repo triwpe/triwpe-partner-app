@@ -4,6 +4,9 @@ import { PartnerCreateRequest, PartnerLoginRequest, PartnerPasswordResetRequest,
 import * as partnerAccountApi from "@/services/api/partnerAccountApi";
 import { cookies } from 'next/headers';
 import CookiesService from "@/lib/cookies";
+import { ApiPartnerCreateRequest, ApiPartnerResponse, PartnerCreateModel, PartnerModel } from "@/types/models/partner";
+import { ApiPartnerDetailCreateRequest, ApiPartnerDetailResponse, PartnerDetailCreateModel, PartnerDetailModel } from "@/types/models/partner-details";
+import { map } from "zod";
 
 export interface ActionResponse<T> {
   success: boolean;
@@ -36,25 +39,6 @@ export async function signIn(email: string, password: string): Promise<ActionRes
 
 export async function signOut() {
   await CookiesService.destroyAuthToken();
-}
-
-export async function signUp(email: string, password: string) {
-  const newPartner: PartnerCreateRequest = {
-    email: email as string,
-    password: password as string,
-  };
-
-  try {
-    const res = await partnerAccountApi.createPartnerAccount(newPartner);
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.detail || "Something went wrong");
-    }
-
-    return { success: true };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
 }
 
 export async function confirmEmail(email: string, token: string) {
@@ -148,15 +132,81 @@ export async function updatePassword(
   }
 }
 
-export async function getCurrentPartner() {
+// ***** NEW *****
+export async function signUp(data: PartnerCreateModel): Promise<ActionResponse<void>> {
   try {
-    const partnerResponse = await partnerAccountApi.getPartnerInfo();
-    if (!partnerResponse || !partnerResponse.ok) {
-      return null;
-    }
-    const partnerData = await partnerResponse.json();
-    return partnerData;
-  } catch (error) {
-    return null;
+  const apiData: ApiPartnerCreateRequest = mapPartnerCreateModelToApiRequest(data);
+
+  const response = await partnerAccountApi.createPartnerAccount(apiData);
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    return { success: false, message: errorData.detail || "Something went wrong" };
   }
+
+  return { success: true };
+
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }  
+}
+
+export async function getLoggedPartner(): Promise<ActionResponse<PartnerModel>> {
+  try {
+    const response = await partnerAccountApi.getLoggedPartner();
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.detail || "Something went wrong" };
+    }
+
+    const data = await response.json();
+    return { success: true, data: mapApiPartnerResponseToModel(data) };
+
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
+const mapPartnerCreateModelToApiRequest = (data: PartnerCreateModel): ApiPartnerCreateRequest => {
+  return {
+    email: data.email,
+    password: data.password,
+    detail: mapPartnerDetailCreateModelToApiRequest(data.detail),
+  };
+}
+
+const mapPartnerDetailCreateModelToApiRequest = (data: PartnerDetailCreateModel): ApiPartnerDetailCreateRequest => {
+  return {
+    business_type: data.businessType,
+    company_name: data.companyName,
+    first_name: data.firstName,
+    last_name: data.lastName,
+    registered_country: data.registeredCountry,
+    payment_currency: data.paymentCurrency,
+  };
+}
+
+const mapApiPartnerResponseToModel = (data: ApiPartnerResponse): PartnerModel => {
+  return {
+    id: data.id,
+    email: data.email,
+    emailConfirmedAt: data.email_confirmed_at,
+    detail: mapApiPartnerDetailResponseToModel(data.detail),
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+  };
+}
+
+const mapApiPartnerDetailResponseToModel = (data: ApiPartnerDetailResponse): PartnerDetailModel => {
+  return {
+    id: data.id,
+    businessType: data.business_type,
+    companyName: data.company_name,
+    firstName: data.first_name,
+    lastName: data.last_name,
+    registeredCountry: data.registered_country,
+    paymentCurrency: data.payment_currency,
+    createdAt: data.created_at,
+  };
 }

@@ -8,17 +8,12 @@ import {
   useContext,
 } from 'react';
 import * as partnerAccountApi from '@/services/api/partnerAccountApi';
-import { getCurrentPartner } from '@/actions/partner';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
+import { getLoggedPartner } from '@/actions/partner';
+import { PartnerModel } from '@/types/models/partner';
 
 interface UserContextType {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: PartnerModel | null;
+  setUser: (user: PartnerModel | null) => void;
   // logout: () => void;
 }
 
@@ -33,20 +28,21 @@ export const useUser = () => {
 };
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<PartnerModel | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const myInfo = await getCurrentPartner();
-        console.log('AQUIIIIIII', myInfo);
+        const { success, data } = await getLoggedPartner();
 
-        if (!myInfo) {
+        console.log('AQUIIIIIII', data);
+
+        if (!data) {
           setUser(null);
           return;
         }
 
-        setUser(myInfo);
+        setUser(data);
       } catch (error) {
         setUser(null);
       }

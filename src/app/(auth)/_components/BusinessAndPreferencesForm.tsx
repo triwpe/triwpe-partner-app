@@ -28,11 +28,11 @@ import {
 } from '@/lib/zod';
 import FormAlert from './FormAlert';
 import { set } from 'zod';
-import { PartnerDetailsCreateModel } from '@/types/models/partner-details';
+import { PartnerDetailCreateModel } from '@/types/models/partner-details';
 
 interface BusinessAndPreferencesFormProps {
-  partnerDetails: PartnerDetailsCreateModel | null;
-  onSuccess: (data: PartnerDetailsCreateModel) => void;
+  partnerDetails: PartnerDetailCreateModel | null;
+  onSuccess: (data: PartnerDetailCreateModel) => void;
 }
 
 export default function BusinessAndPreferencesForm({
@@ -83,7 +83,7 @@ export default function BusinessAndPreferencesForm({
     });
 
     if (response.success) {
-      const partnerDetails: PartnerDetailsCreateModel = {
+      const partnerDetails: PartnerDetailCreateModel = {
         businessType: businessType,
         companyName: companyName,
         firstName: firstName,
