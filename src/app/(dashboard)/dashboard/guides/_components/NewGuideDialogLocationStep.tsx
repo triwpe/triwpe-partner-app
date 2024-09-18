@@ -52,13 +52,11 @@ export const NewGuideDialogLocationStep = ({
       <CardContent>
         <div id="step-1">
           <div className="grid w-full items-center gap-6">
-            <div className="flex flex-col space-y-2">
-              <LocationAutoComplete
-                emptyMessage="No results found"
-                placeholder="Search for a location"
-                onValueChange={(value) => handleLocationChange(value)}
-              />
-            </div>
+            <LocationAutoComplete
+              emptyMessage="No results found"
+              placeholder="Search for a location"
+              onValueChange={(value) => handleLocationChange(value)}
+            />
           </div>
         </div>
       </CardContent>

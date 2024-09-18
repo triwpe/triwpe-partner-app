@@ -117,7 +117,10 @@ export const LocationAutoComplete = ({
   );
 
   return (
-    <CommandPrimitive onKeyUp={handleKeyUp} className="border rounded-md">
+    <CommandPrimitive
+      onKeyUp={handleKeyUp}
+      className={`${isOpen ? 'rounded-b-none' : 'rounded-b-md'} border shadow-none rounded-t-md border-[#d9d9d9]`}
+    >
       <div>
         <CommandInput
           ref={inputRef}
@@ -131,21 +134,21 @@ export const LocationAutoComplete = ({
           onBlur={handleBlur}
           placeholder={placeholder}
           disabled={disabled}
-          className="border-0 h-14 border-[#d9d9d9] text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent"
+          className="h-14 text-[#535773] focus-visible:ring-0 focus-visible:ring-transparent"
         />
       </div>
-      <div className="relative">
+      <div className="relative w-full">
         <div
           className={cn(
-            'animate-in fade-in-0 zoom-in-95 absolute top-0 z-10 w-full rounded-xl bg-white outline-none',
+            'animate-in fade-in-0 absolute top-0 z-10 w-full rounded-t-none rounded-b-md border border-white bg-white outline outline-1 outline-[#d9d9d9]',
             isOpen ? 'block' : 'hidden',
           )}
         >
-          <CommandList className="rounded-lg ring-1 ring-slate-200">
+          <CommandList>
             {isLoading ? (
               <CommandPrimitive.Loading>
                 <div className="p-1">
-                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-14 w-full" />
                 </div>
               </CommandPrimitive.Loading>
             ) : null}
@@ -163,7 +166,7 @@ export const LocationAutoComplete = ({
                       }}
                       onSelect={() => handleSelectOption(location)}
                       className={cn(
-                        'flex w-full items-center gap-2',
+                        'flex w-full items-center gap-2 h-14',
                         !isSelected ? 'pl-8' : null,
                       )}
                     >
