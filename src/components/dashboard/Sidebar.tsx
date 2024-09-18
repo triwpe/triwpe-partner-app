@@ -38,7 +38,7 @@ export default function Sidebar({
         {
           name: 'My Guides',
           icon: <Map className={`${menuIconSize}`} />,
-          href: '/dashboard/guides/all',
+          href: '/dashboard/guides/list',
           order: 0,
         },
       ],
