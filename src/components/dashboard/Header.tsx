@@ -142,16 +142,33 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem>
-                <div className="flex items-center justify-between gap-2 p-2">
-                  <p className="text-sm font-medium text-neutral-500">
-                    {user?.detail.businessType.toLowerCase() === 'company' ? (
-                      <>{user?.detail.companyName}</>
-                    ) : (
-                      <>
-                        {user?.detail.firstName} {user?.detail.lastName}
-                      </>
-                    )}
-                  </p>{' '}
+                <div className="flex justify-start items-center gap-2 py-1">
+                  <Avatar
+                    name={user?.email}
+                    variant="beam"
+                    size={35}
+                    colors={[
+                      '#F25C54',
+                      '#F27059',
+                      '#f4845f',
+                      '#f79d65',
+                      '#f7b267',
+                    ]}
+                  />
+                  <div className="flex flex-col gap-1">
+                    <p className="text-xs font-semibold text-neutral-500">
+                      {user?.detail.businessType.toLowerCase() === 'company' ? (
+                        <>{user?.detail.companyName}</>
+                      ) : (
+                        <>
+                          {user?.detail.firstName} {user?.detail.lastName}
+                        </>
+                      )}
+                    </p>
+                    <p className="text-xs font-medium text-neutral-500">
+                      {user?.email}
+                    </p>
+                  </div>
                 </div>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
