@@ -5,6 +5,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { NewGuideDialog } from '../_components/NewGuideDialog';
 import { validate as uuidValidate } from 'uuid';
+import { isValid as ulidIsValid } from 'ulidx';
 import Loading from '@/app/(dashboard)/loading';
 import {
   AlertDialog,
@@ -93,7 +94,7 @@ export default function Page({ params }: { params: PageParams }) {
   >(null);
 
   useEffect(() => {
-    if (!uuidValidate(guideId)) {
+    if (!ulidIsValid(guideId)) {
       router.replace('/dashboard/guides/new');
     }
 
